@@ -5,7 +5,8 @@ namespace App\Modules\SalesPurchases\Resources;
 use App\Libraries\Abstract\Resource;
 use App\Modules\SalesPurchases\Models\PaymentMethod;
 
-class PaymentMethodResource extends Resource {
+class PaymentMethodResource extends Resource
+{
 
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Payment Method';
@@ -18,16 +19,44 @@ class PaymentMethodResource extends Resource {
     public static function table()
     {
         return [
+            'name' => [
+                'label' => 'Name',
+                '_searchable' => true
+            ],
+            'description' => [
+                'label' => 'Description',
+                '_searchable' => true
+            ],
+            '_action'
         ];
     }
 
     public static function form()
     {
-        return [];
+        return [
+            'Basic Information' => [
+                'name' => [
+                    'label' => 'Name',
+                    'type' => 'text',
+                    'placeholder' => 'Enter your name',
+                    'required' => true,
+                ],
+                'description' => [
+                    'label' => 'Description',
+                    'type' => 'textarea',
+                    'placeholder' => 'Enter your description',
+                ],
+            ]
+        ];
     }
 
     public static function detail()
     {
-        return [];
+        return [
+            'Basic Information' => [
+                'name' => 'Name',
+                'description' => 'Description',
+            ],
+        ];
     }
 }

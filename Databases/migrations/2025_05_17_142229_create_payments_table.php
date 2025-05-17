@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('invoice_id')->nullable();
             $table->foreign('invoice_id')->references('id')->on('sp_invoices')->onDelete('restrict');
 
-            $table->unsignedBigInteger('peyment_method_id')->nullable();
-            $table->foreign('peyment_method_id')->references('id')->on('sp_payment_methods')->onDelete('restrict');
+            $table->unsignedBigInteger('payment_method_id')->nullable();
+            $table->foreign('payment_method_id')->references('id')->on('sp_payment_methods')->onDelete('restrict');
 
             $table->decimal('amount', 15, 2)->default(0);
             $table->string('record_type')->default('IN');
