@@ -30,7 +30,7 @@
     <body>
         <nav class="navbar bg-danger text-white">
             <div class="container-fluid">
-                <div class="d-flex justify-content-between w-100 align-items-center" style="gap:24px">
+                <div class="d-flex justify-content-between w-100 align-items-center">
                     <div class="d-flex align-items-center" style="gap:8px">
                         <div
                             class="bg-white rounded-circle text-secondary d-flex justify-content-center align-items-center"
@@ -42,8 +42,8 @@
                             <span style="font-size: 12px;">{!! auth()->user()->userRoleLabel !!}</span>
                         </div>
                     </div>
-                    <div class="d-flex position-relative" role="search" style="width: 500px;">
-                        <input class="form-control me-2" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
+                    <div class="d-flex position-relative d-none d-md-block" role="search" style="max-width: 350px;width:100%;">
+                        <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
                     </div>
                     <div class="text-end">
                         <p class="m-0 text-end d-block" id="clock-active">Loading clock...</p>
@@ -54,24 +54,29 @@
         </nav>
         <div class="container-fluid">
             <div class="row my-3">
-                <div class="col-8">
-                    <table class="table table-responsive table-bordered item-table">
-                        <thead>
-                            <tr>
-                                <th class="text-center" width="25px">No</th>
-                                <th class="text-center">Nama Produk</th>
-                                <th class="text-center" width="100px">Satuan</th>
-                                <th class="text-center" width="100px">Jumlah</th>
-                                <th width="200px" class="text-end">Subtotal</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr><td colspan="5"><i>Tidak ada data</i></td></tr>
-                        </tbody>
-                    </table>
+                <div class="col-12 d-block d-md-none mb-3">
+                    <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
                 </div>
-                <div class="col-4">
+                <div class="col-12 col-lg-8">
+                    <div class="table-responsive">
+                        <table class="table table-bordered item-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="25px">No</th>
+                                    <th class="text-center">Nama Produk</th>
+                                    <th class="text-center" width="70px">Satuan</th>
+                                    <th class="text-center" width="70px">Jumlah</th>
+                                    <th width="200px" class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                <tr><td colspan="5"><i>Tidak ada data</i></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item px-0">
                             <label for="">Diskon</label>
@@ -118,6 +123,9 @@
             integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
             crossorigin="anonymous"></script>
 
+
+            <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+
             <script>
                 var selectedItems = []
                 var selectedRow = 1
@@ -132,7 +140,7 @@
                             }
 
                             selectedItems.push(item)
-                            var items = document.querySelectorAll('tbody tr');
+                            var items = document.querySelectorAll('.cart-item');
 
                             var found = document.querySelector(`#item-${item.code}`)
                             if(found) {
@@ -140,20 +148,19 @@
                                 changeQty(found.querySelector('input[name="qty"]').value, item.code);
                             } else {
                                 var html = `
-                                        <tr id="item-${item.code}" class="cart-item" data-code="${item.code}">
+                                        <tr id="item-${item.code}" class="cart-item" data-code="${item.code}" onclick="setActive(this)" style="cursor:pointer;">
                                                 <td width="25px">${items.length+1} <input type="hidden" name="id" value="${item.id}"></td>
                                                 <td>
                                                     <span class="item-name">${item.name}</span><br>
                                                     ${item.code} ${item.sku ? '-' + item.sku : ''}
                                                 </td>
-                                                <td width="100px">
-                                                    <select name="unit" style="width:100px" class="form-control form-lg" onchange="changeUnit('${item.code}', '${item.price}')">
-                                                        <option value="">Pilih Unit</option>
+                                                <td width="70px">
+                                                    <select name="unit" style="width:70px" class="form-control form-lg" onchange="changeUnit('${item.code}', '${item.price}')">
                                                         ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
                                                         ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
                                                     </td>
-                                                <td width="100px">
-                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:100px" placeholder="Masukkan jumlah" value="1" onchange="changeQty(this.value, '${item.code}')">
+                                                <td width="70px">
+                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onchange="changeQty(this.value, '${item.code}')">
                                                 </td>   
                                                 <td id="price-${item.code}" class="prices text-end" data-price="${item.price}" data-baseprice="${item.price}">
                                                     ${formatNumber(item.price)}
@@ -161,7 +168,9 @@
     
                                             </tr>
                                     `
-                                    document.querySelector('tbody').innerHTML += html;
+
+                                    $('tbody').append(html)
+                                    // document.querySelector('tbody').innerHTML += html;
     
                                     changeUnit(item.code)
     
@@ -393,6 +402,13 @@
                         document.querySelector('[name="discount"]').focus()
                     }
                 });
+
+                function setActive(el)
+                {
+                    const arr = document.querySelectorAll('.cart-item')
+                    const index = Array.from(arr).findIndex(cart => cart == el)
+                    updateSelection(index+1)
+                }
 
                 function updateSelection(newIndex) {
                     if(selectedItems.length == 0) return

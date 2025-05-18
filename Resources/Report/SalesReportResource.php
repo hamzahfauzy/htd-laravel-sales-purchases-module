@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class SalesReportResource extends Resource {
 
     protected static ?string $navigationGroup = 'Reports';
-    protected static ?string $navigationLabel = 'Sales';
+    protected static ?string $navigationLabel = 'Sales Report';
     protected static ?string $navigationIcon = 'bx bx-file';
     protected static ?string $slug = 'reports/sales';
     protected static ?string $routeGroup = 'reports';
@@ -27,25 +27,21 @@ class SalesReportResource extends Resource {
 
     public static function getModel()
     {
-        $date_start = request('filter.date_start', date('Y-m-d'));
-        $date_end = request('filter.date_end', date('Y-m-d'));
+        $date_start = request('filter.date_start', date('Y-m-d')) . ' 00:00:00';
+        $date_end = request('filter.date_end', date('Y-m-d')) . ' 23:59:59';
         $model = static::$model::select(
                             'inv_items.name as product_name',
                             'sp_invoice_items.unit as item_unit',
-                            DB::raw("FORMAT(COALESCE(SUM(sp_invoice_items.qty),0),0) AS total_qty"),
-                            DB::raw("FORMAT(COALESCE(SUM(sp_invoice_items.total_discount),0), 0) AS total_discount"),
-                            DB::raw("FORMAT(COALESCE(SUM(sp_invoice_items.final_price),0), 0) AS total_price"),
+                            DB::raw("FORMAT(COALESCE(SUM(CASE WHEN sp_invoices.created_at BETWEEN '$date_start' AND '$date_end' THEN sp_invoice_items.qty ELSE 0 END),0),0) AS total_qty"),
+                            DB::raw("FORMAT(COALESCE(SUM(CASE WHEN sp_invoices.created_at BETWEEN '$date_start' AND '$date_end' THEN sp_invoice_items.total_discount ELSE 0 END),0), 0) AS total_discount"),
+                            DB::raw("FORMAT(COALESCE(SUM(CASE WHEN sp_invoices.created_at BETWEEN '$date_start' AND '$date_end' THEN sp_invoice_items.total_price ELSE 0 END),0), 0) AS sales_amount"),
+                            DB::raw("FORMAT(COALESCE(SUM(CASE WHEN sp_invoices.created_at BETWEEN '$date_start' AND '$date_end' THEN sp_invoice_items.final_price ELSE 0 END),0), 0) AS total_sales"),
                         )
                         ->join('sp_invoices','sp_invoices.id','=','sp_invoice_items.invoice_id')
                         ->join('inv_items','inv_items.id','=','sp_invoice_items.product_id')
                         ->groupBy('sp_invoice_items.product_id','sp_invoice_items.unit')
                         ->where('sp_invoices.record_status','PUBLISH')
                         ->where('sp_invoices.record_type','SALES');
-
-        if(isset($_GET['date']))
-        {
-            $model = $model->whereBetween('sp_invoices.created_at', '<=', $_GET['date'].' 23:59:59');
-        }
 
         return $model;
     }
@@ -77,13 +73,18 @@ class SalesReportResource extends Resource {
                 '_searchable' => false,
                 '_order' => false
             ],
+            'sales_amount' => [
+                'label' => 'Sales Amount',
+                '_searchable' => false,
+                '_order' => false
+            ],
             'total_discount' => [
                 'label' => 'Total Discount',
                 '_searchable' => false,
                 '_order' => false
             ],
-            'total_price' => [
-                'label' => 'Total Price',
+            'total_sales' => [
+                'label' => 'Total Sales',
                 '_searchable' => false,
                 '_order' => false
             ],
