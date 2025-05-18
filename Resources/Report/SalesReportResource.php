@@ -31,13 +31,14 @@ class SalesReportResource extends Resource {
         $date_end = request('filter.date_end', date('Y-m-d'));
         $model = static::$model::select(
                             'inv_items.name as product_name',
-                            DB::raw("COALESCE(SUM(sp_invoice_items.qty),0) AS total_qty"),
-                            DB::raw("COALESCE(SUM(sp_invoice_items.total_discount),0) AS total_discount"),
-                            DB::raw("COALESCE(SUM(sp_invoice_items.final_price),0) AS total_price"),
+                            'sp_invoice_items.unit as item_unit',
+                            DB::raw("FORMAT(COALESCE(SUM(sp_invoice_items.qty),0),0) AS total_qty"),
+                            DB::raw("FORMAT(COALESCE(SUM(sp_invoice_items.total_discount),0), 0) AS total_discount"),
+                            DB::raw("FORMAT(COALESCE(SUM(sp_invoice_items.final_price),0), 0) AS total_price"),
                         )
                         ->join('sp_invoices','sp_invoices.id','=','sp_invoice_items.invoice_id')
                         ->join('inv_items','inv_items.id','=','sp_invoice_items.product_id')
-                        ->groupBy('sp_invoice_items.product_id')
+                        ->groupBy('sp_invoice_items.product_id','sp_invoice_items.unit')
                         ->where('sp_invoices.record_status','PUBLISH')
                         ->where('sp_invoices.record_type','SALES');
 
@@ -67,7 +68,7 @@ class SalesReportResource extends Resource {
                 ],
                 '_order' => 'product_name'
             ],
-            'unit' => [
+            'item_unit' => [
                 'label' => 'Unit',
                 '_searchable' => false,
             ],

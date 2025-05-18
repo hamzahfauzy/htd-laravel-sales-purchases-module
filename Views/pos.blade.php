@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Bootstrap demo</title>
+        <meta name="csrf_token" content="{{csrf_token()}}">
+        <title>Kasir</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -216,8 +217,7 @@
                             } else {
                                 var html = `
                                         <tr id="item-${item.code}">
-                                                <input type="hidden" name="id" value="${item.id}">
-                                                <td>${items.length+1}</td>
+                                                <td>${items.length+1} <input type="hidden" name="id" value="${item.id}"></td>
                                                 <td>
                                                     ${item.name}
                                                 </td>
@@ -230,7 +230,7 @@
                                                 <td>
                                                     <input type="number" name="qty" class="form-control qty form-lg" style="width:150px" placeholder="Masukkan jumlah" value="1" onchange="changeQty(this.value, '${item.code}')">
                                                 </td>   
-                                                <td id="price-${item.code}" class="prices" data-price="${item.price}">
+                                                <td id="price-${item.code}" class="prices" data-price="${item.price}" data-baseprice="${item.price}">
                                                     ${formatNumber(item.price)}
                                                 </td>
     
@@ -251,7 +251,7 @@
                     var selectUnit = document.querySelector(`#item-${code} [name="unit"]`)
                     var price = selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price')
                     var subtotal = qty * price;
-                    setSubTotal(code, subtotal);
+                    setSubTotal(code, subtotal, price);
                     var discount = document.querySelector('input[name="discount"]').value;
                     var subtotals = document.querySelectorAll('.prices');
                     var total = 0;
@@ -267,7 +267,7 @@
                     var selectUnit = document.querySelector(`#item-${code} [name="unit"]`)
                     var price = selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price')
                     var subtotal = price * qty;
-                    setSubTotal(code, subtotal);
+                    setSubTotal(code, subtotal, price);
                     var discount = document.querySelector('input[name="discount"]').value;
                     var subtotals = document.querySelectorAll('.prices');
                     var total = 0;
@@ -305,9 +305,10 @@
                     changePaymentAmount(document.querySelector('input[name="payment_amount"]').value);
                 }
 
-                function setSubTotal(code, value) {
+                function setSubTotal(code, value, base_price) {
                     document.getElementById(`price-${code}`).innerHTML = formatNumber(value);
                     document.getElementById(`price-${code}`).setAttribute('data-price', value);
+                    document.getElementById(`price-${code}`).setAttribute('data-baseprice', base_price);
                 }
 
                 function bayar() {
@@ -320,7 +321,7 @@
                         var id = item.querySelector('input[name="id"]').value;
                         var qty = item.querySelector('input[name="qty"]').value;
                         var unit = item.querySelector('select[name="unit"]').value;
-                        var price = parseInt(item.querySelector('.prices').getAttribute('data-price'));
+                        var price = parseInt(item.querySelector('.prices').getAttribute('data-baseprice'));
                         items.push({
                             product_id: id,
                             name: item.querySelector('td:nth-child(2)').innerHTML,
@@ -328,6 +329,7 @@
                             unit: unit,
                             base_price: price,
                             total_price: price * qty
+                            final_price: (price * qty) - 0 // 0 as discount
                         });
                     });
 
@@ -364,6 +366,7 @@
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify(data)
                     })

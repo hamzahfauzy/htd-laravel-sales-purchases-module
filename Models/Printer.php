@@ -90,6 +90,7 @@ class Printer extends Model
             $printer->close();
         } catch (\Exception $e) {
             \Log::error("Printer Error: " . $e->getMessage());
+            echo $e->getMessage();
         }
     }
 }
