@@ -219,8 +219,7 @@
                                                 <input type="hidden" name="id" value="${item.id}">
                                                 <td>${items.length+1}</td>
                                                 <td>
-                                                    ${item.completeName}<br>
-                                                    @${formatNumber(item.price)}
+                                                    ${item.name}
                                                 </td>
                                                 <td>
                                                     <select name="unit" style="width:150px" class="form-control form-lg" onchange="changeUnit('${item.code}', '${item.price}')">
@@ -324,6 +323,7 @@
                         var price = parseInt(item.querySelector('.prices').getAttribute('data-price'));
                         items.push({
                             product_id: id,
+                            name: item.querySelector('td:nth-child(2)').innerHTML,
                             qty: parseInt(qty),
                             unit: unit,
                             base_price: price,

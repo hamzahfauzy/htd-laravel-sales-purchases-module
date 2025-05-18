@@ -60,7 +60,17 @@ Route::post('pos', function () {
             ]);
         }
 
-
+        Printer::first()->printStruk([
+            'toko' => [
+                'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
+                'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
+                'telepon' => env('STORE_PHONE', '0812-3456-7890'),
+            ],
+            'kasir' => auth()->user()->name,
+            'tanggal' => date('Y-m-d H:i:s'),
+            'items' => request()['items'],
+            'bayar' => request()['payment_amount'],
+        ]);
 
         return response()->json([
             'status' => true,

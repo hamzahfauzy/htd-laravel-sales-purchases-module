@@ -53,14 +53,14 @@ class Printer extends Model
             // Items
             $total = 0;
             foreach ($data['items'] as $item) {
-                $subtotal = $item['harga'] * $item['qty'];
+                $subtotal = $item['total_price'];
                 $total += $subtotal;
 
                 // Baris 1: Nama Produk
-                $printer->text($item['nama'] . "\n");
+                $printer->text($item['name'] . "\n");
 
                 // Baris 2: Harga x Qty        Subtotal (rata kanan)
-                $line = number_format($item['harga'], 0, ',', '.') . " x " . $item['qty'];
+                $line = number_format($item['base_price'], 0, ',', '.') . " x " . $item['qty'];
                 $sub = number_format($subtotal, 0, ',', '.');
                 $padding = $paperSize - strlen($line) - strlen($sub);
                 $printer->text($line . str_repeat(' ', max($padding, 1)) . $sub . "\n");
@@ -83,15 +83,13 @@ class Printer extends Model
             $printer->text("Silakan datang kembali\n");
 
             $printer->feed(1);
-            if($this->auto_cut == 'YES')
-            {
+            if ($this->auto_cut == 'YES') {
                 $printer->cut();
             }
 
             $printer->close();
-
         } catch (\Exception $e) {
-            echo "Terjadi kesalahan saat mencetak: " . $e->getMessage();
+            \Log::error("Printer Error: " . $e->getMessage());
         }
     }
 }
