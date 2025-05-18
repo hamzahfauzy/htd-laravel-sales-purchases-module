@@ -10,7 +10,7 @@ class InvoiceResource extends Resource
 
     protected static ?string $navigationGroup = 'Sales & Purchases';
     protected static ?string $navigationLabel = 'Invoice';
-    protected static ?string $navigationIcon = 'bx bx-category';
+    protected static ?string $navigationIcon = 'bx bx-file';
     protected static ?string $slug = 'sales-purchases/invoices';
     protected static ?string $routeGroup = 'sales-purchases';
 
@@ -44,11 +44,11 @@ class InvoiceResource extends Resource
                 '_searchable' => true
             ],
             'record_type' => [
-                'label' => 'Record Type',
+                'label' => 'Type',
                 '_searchable' => true
             ],
             'record_status' => [
-                'label' => 'Record Status',
+                'label' => 'Status',
                 '_searchable' => true
             ],
             '_action'
@@ -62,42 +62,50 @@ class InvoiceResource extends Resource
                 'code' => [
                     'label' => 'Code',
                     'type' => 'text',
-                    'placeholder' => 'Enter your code'
+                    'placeholder' => 'Enter code'
                 ],
                 'total_item' => [
                     'label' => 'Total Item',
-                    'type' => 'number',
-                    'placeholder' => 'Enter your Total Item',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter Total Item',
                 ],
                 'total_qty' => [
                     'label' => 'Total Qty',
-                    'type' => 'number',
-                    'placeholder' => 'Enter your Total Qty',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter Total Qty',
                 ],
                 'total_price' => [
                     'label' => 'Total Price',
-                    'type' => 'number',
-                    'placeholder' => 'Enter your Total Price',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter Total Price',
                 ],
                 'total_discount' => [
                     'label' => 'Total Discount',
-                    'type' => 'number',
-                    'placeholder' => 'Enter your Total Discount',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter Total Discount',
                 ],
                 'final_price' => [
                     'label' => 'Final Price',
-                    'type' => 'number',
-                    'placeholder' => 'Enter your Final Price',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter Final Price',
                 ],
                 'record_type' => [
                     'label' => 'Record Type',
-                    'type' => 'text',
-                    'placeholder' => 'Enter your Record Type',
+                    'type' => 'select',
+                    'options' => [
+                        'SALES' => 'SALES',
+                        'PURCHASES' => 'PURCHASES'
+                    ],
+                    'required' => true
                 ],
                 'record_status' => [
-                    'label' => 'Record Status',
-                    'type' => 'text',
-                    'placeholder' => 'Enter your Record Status',
+                    'label' => 'Status',
+                    'type' => 'select',
+                    'options' => [
+                        'DRAFT' => 'DRAFT',
+                        'PUBLISH' => 'PUBLISH'
+                    ],
+                    'required' => true
                 ],
 
             ]

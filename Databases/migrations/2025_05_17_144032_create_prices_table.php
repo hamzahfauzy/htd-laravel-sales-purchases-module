@@ -17,8 +17,6 @@ return new class extends Migration
             $table->foreign('product_id')->references('id')->on('inv_items')->onDelete('restrict');
 
             $table->string('unit');
-            $table->integer('is_default')->default(0);
-            $table->integer('stock_conversion')->default(1);
             $table->decimal('amount_1', 15, 2)->default(0);
             $table->decimal('min_qty_1', 15, 2)->default(1);
             $table->decimal('amount_2', 15, 2)->nullable();

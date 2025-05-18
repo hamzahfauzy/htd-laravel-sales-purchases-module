@@ -10,7 +10,7 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Supplier';
-    protected static ?string $navigationIcon = 'bx bx-category';
+    protected static ?string $navigationIcon = 'bx bx-user-plus';
     protected static ?string $slug = 'master/suppliers';
     protected static ?string $routeGroup = 'master';
 
@@ -50,28 +50,28 @@ class SupplierResource extends Resource
                 'code' => [
                     'label' => 'Code',
                     'type' => 'text',
-                    'placeholder' => 'Enter your code'
+                    'placeholder' => 'Enter code'
                 ],
                 'name' => [
                     'label' => 'Name',
                     'type' => 'text',
-                    'placeholder' => 'Enter your name',
+                    'placeholder' => 'Enter name',
                     'required' => true,
                 ],
                 'email' => [
                     'label' => 'Email',
                     'type' => 'email',
-                    'placeholder' => 'Enter your email',
+                    'placeholder' => 'Enter email',
                 ],
                 'phone' => [
                     'label' => 'Phone',
                     'type' => 'text',
-                    'placeholder' => 'Enter your phone',
+                    'placeholder' => 'Enter phone',
                 ],
                 'address' => [
                     'label' => 'Address',
                     'type' => 'textarea',
-                    'placeholder' => 'Enter your address',
+                    'placeholder' => 'Enter address',
                 ],
 
             ]

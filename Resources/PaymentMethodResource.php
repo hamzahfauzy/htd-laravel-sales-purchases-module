@@ -10,7 +10,7 @@ class PaymentMethodResource extends Resource
 
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Payment Method';
-    protected static ?string $navigationIcon = 'bx bx-category';
+    protected static ?string $navigationIcon = 'bx bx-wallet';
     protected static ?string $slug = 'master/payment-methods';
     protected static ?string $routeGroup = 'master';
 
@@ -38,13 +38,13 @@ class PaymentMethodResource extends Resource
                 'name' => [
                     'label' => 'Name',
                     'type' => 'text',
-                    'placeholder' => 'Enter your name',
+                    'placeholder' => 'Enter name',
                     'required' => true,
                 ],
                 'description' => [
                     'label' => 'Description',
                     'type' => 'textarea',
-                    'placeholder' => 'Enter your description',
+                    'placeholder' => 'Enter description',
                 ],
             ]
         ];

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('type')->default('USB'); // network, bluetooth, manual, rawbt
-            $table->string('connection')->nullable(); // Alamat koneksi: nama device, IP address, MAC, atau port USB
+            $table->string('connection_string')->nullable(); // Alamat koneksi: nama device, IP address, MAC, atau port USB
             $table->string('paper_size')->nullable(); // Ukuran kertas: 80mm, 58mm, dll
             $table->string('character_set')->nullable(); // Charset printer, misalnya: PC437, PC858 (untuk ESC/POS)
             $table->string('auto_cut')->default('YES');

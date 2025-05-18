@@ -2,6 +2,7 @@
 
 namespace App\Modules\SalesPurchases\Models;
 
+use App\Modules\Base\Traits\HasActivity;
 use App\Modules\Base\Traits\HasCreator;
 use App\Traits\HasDotNotationFilter;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     //
-    use HasCreator, HasDotNotationFilter;
+    use HasCreator, HasDotNotationFilter, HasActivity;
 
     protected $table = 'sp_payments';
     protected $guarded = ['id'];

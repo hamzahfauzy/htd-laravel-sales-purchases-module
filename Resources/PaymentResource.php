@@ -12,7 +12,7 @@ class PaymentResource extends Resource
 
     protected static ?string $navigationGroup = 'Sales & Purchases';
     protected static ?string $navigationLabel = 'Payments';
-    protected static ?string $navigationIcon = 'bx bx-category';
+    protected static ?string $navigationIcon = 'bx bx-dollar';
     protected static ?string $slug = 'sales-purchases/payments';
     protected static ?string $routeGroup = 'sales-purchases';
 
@@ -34,11 +34,11 @@ class PaymentResource extends Resource
                 '_searchable' => true
             ],
             'record_type' => [
-                'label' => 'Record Type',
+                'label' => 'Type',
                 '_searchable' => true
             ],
             'record_status' => [
-                'label' => 'Record Status',
+                'label' => 'Status',
                 '_searchable' => true
             ],
             '_action'
@@ -65,28 +65,34 @@ class PaymentResource extends Resource
                     'label' => 'Invoice',
                     'type' => 'select',
                     'options' => $selectedInvoices,
+                    'placeholder' => 'Choose Invoice',
                     'required' => true,
                 ],
                 'payment_method_id' => [
                     'label' => 'Payment Method',
                     'type' => 'select',
                     'options' => $selectedPatmentMethod,
+                    'placeholder' => 'Choose Payment Method',
                     'required' => true,
                 ],
                 'amount' => [
                     'label' => 'Amount',
-                    'type' => 'number',
-                    'placeholder' => 'Enter your amount'
-                ],
-                'record_type' => [
-                    'label' => 'Record Type',
-                    'type' => 'text',
-                    'placeholder' => 'Enter your Record Type',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter amount'
                 ],
                 'record_status' => [
-                    'label' => 'Record Status',
+                    'label' => 'Status',
+                    'type' => 'select',
+                    'options' => [
+                        'DRAFT' => 'DRAFT',
+                        'PUBLISH' => 'PUBLISH'
+                    ],
+                    'required' => true
+                ],
+                'reference' => [
+                    'label' => 'Reference',
                     'type' => 'text',
-                    'placeholder' => 'Enter your Record Status',
+                    'placeholder' => 'Enter Reference',
                 ],
             ],
         ];

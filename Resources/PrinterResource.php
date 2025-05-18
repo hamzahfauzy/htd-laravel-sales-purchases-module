@@ -10,7 +10,7 @@ class PrinterResource extends Resource
 
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Printer';
-    protected static ?string $navigationIcon = 'bx bx-category';
+    protected static ?string $navigationIcon = 'bx bx-printer';
     protected static ?string $slug = 'master/printers';
     protected static ?string $routeGroup = 'master';
 
@@ -27,7 +27,7 @@ class PrinterResource extends Resource
                 'label' => 'Type',
                 '_searchable' => true
             ],
-            'connection' => [
+            'connection_string' => [
                 'label' => 'connection',
                 '_searchable' => true
             ],
@@ -43,6 +43,10 @@ class PrinterResource extends Resource
                 'label' => 'Auto Cut',
                 '_searchable' => true
             ],
+            'creator.name' => [
+                'label' => 'Created By',
+                '_searchable' => true
+            ],
             '_action'
         ];
     }
@@ -54,33 +58,49 @@ class PrinterResource extends Resource
                 'name' => [
                     'label' => 'Name',
                     'type' => 'text',
-                    'placeholder' => 'Enter your name',
+                    'placeholder' => 'Enter name',
                     'required' => true,
                 ],
                 'type' => [
                     'label' => 'type',
-                    'type' => 'text',
-                    'placeholder' => 'Enter your type',
+                    'type' => 'select',
+                    'options' => [
+                        'WINDOWS' => 'WINDOWS',
+                        'USB' => 'USB',
+                        'NETWORK' => 'NETWORK', 
+                        'BLUETOOTH' => 'BLUETOOTH',
+                        'RAWBT' => 'RAWBT'
+                    ],
+                    'required' => true
                 ],
-                'connection' => [
+                'connection_string' => [
                     'label' => 'connection',
                     'type' => 'text',
-                    'placeholder' => 'Enter your connection',
+                    'placeholder' => 'Enter connection',
+                    'required' => true
                 ],
                 'paper_size' => [
                     'label' => 'Paper Size',
-                    'type' => 'text',
-                    'placeholder' => 'Enter your Paper Size',
+                    'type' => 'select',
+                    'options' => [
+                        '32' => '58mm',
+                        '48' => '80mm', 
+                    ],
+                    'required' => true
                 ],
                 'character_set' => [
                     'label' => 'Character Set',
                     'type' => 'text',
-                    'placeholder' => 'Enter your Character Set',
+                    'placeholder' => 'Enter Character Set',
                 ],
                 'auto_cut' => [
                     'label' => 'Auto Cut',
-                    'type' => 'text',
-                    'placeholder' => 'Enter your Auto Cut',
+                    'type' => 'select',
+                    'options' => [
+                        'YES' => 'YES', 
+                        'NO' => 'NO'
+                    ],
+                    'required' => true
                 ],
             ]
         ];
@@ -92,7 +112,7 @@ class PrinterResource extends Resource
             'Basic Information' => [
                 'name' => 'Name',
                 'type' => 'Type',
-                'connection' => 'Connection',
+                'connection_string' => 'Connection',
                 'paper_size' => 'Paper Size',
                 'character_set' => 'Character Set',
                 'auto_cut' => 'Auto Cut',
