@@ -63,6 +63,16 @@ class PriceResource extends Resource
             $itemOptions[$item->id] = $item->completeName;
         }
 
+        $units = [];
+        if(static::$record)
+        {
+            $units[static::$record?->unit] = static::$record?->unit;
+            foreach(static::$record->product->conversions as $conversion)
+            {
+                $units[$conversion->unit] = $conversion->unit;
+            }
+        }
+
         return [
             'Basic Information' => [
                 'product_id' => [
@@ -75,7 +85,7 @@ class PriceResource extends Resource
                 'unit' => [
                     'label' => 'Unit',
                     'type' => 'select',
-                    'options' => [],
+                    'options' => $units,
                     'placeholder' => 'Choose unit',
                     'required' => true,
                 ],
