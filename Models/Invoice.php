@@ -13,4 +13,14 @@ class Invoice extends Model
 
     protected $table = 'sp_invoices';
     protected $guarded = ['id'];
+
+    function items()
+    {
+        return $this->hasMany(InvoiceItem::class, 'invoice_id', 'id');
+    }
+
+    function payment()
+    {
+        return $this->hasMany(Payment::class, 'invoice_id', 'id');
+    }
 }
