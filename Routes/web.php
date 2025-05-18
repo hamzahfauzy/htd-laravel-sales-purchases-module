@@ -8,8 +8,75 @@ use App\Modules\SalesPurchases\Models\PaymentMethod;
 use App\Modules\SalesPurchases\Models\Price;
 use App\Modules\SalesPurchases\Models\Printer;
 use Illuminate\Support\Facades\Route;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
-Route::middleware(['auth','web','verified'])->group(function(){
+Route::middleware(['auth', 'web', 'verified'])->group(function () {
+
+    Route::get('import', function () {
+
+        $inputFileName = public_path('products.xlsx');
+        try {
+            $spreadsheet = IOFactory::load($inputFileName);
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray();
+            $raw = [];
+            foreach ($data as $i => $row) {
+                if ($i == 0 || empty($row[1]) || empty($row[2]) || empty($row[4]) || empty($row[6])) continue;
+                $raw['code'][] = $row[1];
+                $raw['name'][] = $row[2];
+                $raw['price'][] = $row[11];
+
+                $raw['base_unit_code'][] = $row[4];
+                $raw['base_unit_value'][] = $row[5];
+
+                $raw['sec_units_code'][] = $row[6];
+                $raw['sec_units_value'][] = $row[7];
+            }
+
+            $new = [];
+            for ($i = 0; $i < count($raw['code']); $i++) {
+                $new[] = [
+                    'code' => $raw['code'][$i],
+                    'name' => $raw['name'][$i],
+                    'price' => str_replace(',00', '', str_replace('.', '', $raw['price'][$i])),
+                    'units' => [
+                        'base' => [
+                            'code' => $raw['base_unit_code'][$i],
+                            'value' => $raw['base_unit_value'][$i],
+                        ],
+                        'secondary' => [
+                            'code' => $raw['sec_units_code'][$i],
+                            'value' => $raw['sec_units_value'][$i],
+                        ],
+                    ],
+                ];
+            }
+
+            foreach ($new as $item) {
+                $itemModel = Item::create([
+                    'code' => $item['code'],
+                    'name' => $item['name'],
+                    'unit' => $item['units']['base']['code'],
+                ]);
+
+                $itemModel->conversions()->create([
+                    'unit' => $item['units']['secondary']['code'],
+                    'value' => $item['units']['secondary']['value'],
+                ]);
+
+                Price::create([
+                    'product_id' => $itemModel->id,
+                    'unit' => $item['units']['base']['code'],
+                    'amount_1' => $item['price'],
+                ]);
+            }
+
+            return "Successfully imported " . count($new) . " items";
+        } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
+            die('Error loading file: ' . $e->getMessage());
+        }
+    });
+
     Route::get('pos', function () {
         if (isset($_GET['code'])) {
             $item = Item::where('code', $_GET['code'])->first();
@@ -107,5 +174,4 @@ Route::middleware(['auth','web','verified'])->group(function(){
 
         Printer::find(1)->printStruk($transaksi);
     });
-
 });
