@@ -9,4 +9,6 @@ return [
     'App\\Modules\\SalesPurchases\\Resources\\PriceResource',
     'App\\Modules\\SalesPurchases\\Resources\\InvoiceResource',
     'App\\Modules\\SalesPurchases\\Resources\\PaymentResource',
+
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\SalesReportResource',
 ];
