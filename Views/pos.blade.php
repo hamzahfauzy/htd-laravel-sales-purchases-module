@@ -21,150 +21,64 @@
                 margin: 6px;
                 color: white;
             }
+
+            .cart-item.selected td {
+                background-color:#c2c2fd;
+            }
         </style>
     </head>
     <body>
         <nav class="navbar bg-danger text-white">
             <div class="container-fluid">
-                <div class="d-flex" style="gap:24px">
-                    <button class="navbar-toggler text-white border-white"
-                        type="button"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar"
-                        aria-controls="offcanvasNavbar"
-                        aria-label="Toggle navigation">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
+                <div class="d-flex justify-content-between w-100 align-items-center" style="gap:24px">
                     <div class="d-flex align-items-center" style="gap:8px">
                         <div
                             class="bg-white rounded-circle text-secondary d-flex justify-content-center align-items-center"
                             style="width: 40px; height: 40px;">
-                            <i
-                                class="fa-solid fa-user"></i>
+                            <i class="fa-solid fa-user"></i>
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                            <h6 class="m-0">Novian Adrian</h6>
-                            <span style="font-size: 12px;">Admin</span>
+                            <h6 class="m-0">{{auth()->user()->name}}</h6>
+                            <span style="font-size: 12px;">{!! auth()->user()->userRoleLabel !!}</span>
                         </div>
                     </div>
-                    <form class="d-flex position-relative" role="search"
-                        style="width: 500px;">
-                        <input class="form-control me-2" type="search"
-                            placeholder="Cari Produk" aria-label="Search" />
-                    </form>
-                    <div
-                        class="bg-white rounded-circle text-secondary d-flex justify-content-center align-items-center"
-                        style="width: 40px; height: 40px;">
-
-                        <i class="fa-solid fa-list"></i>
+                    <div class="d-flex position-relative" role="search" style="width: 500px;">
+                        <input class="form-control me-2" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
                     </div>
-                </div>
-                <div
-                    class="p-2 bg-white text-dark border-info border-top"
-                    style="border-width: 3px !important;" id="total-item"></div>
-                <div class="offcanvas offcanvas-start" tabindex="-1"
-                    id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title"
-                            id="offcanvasNavbarLabel">Offcanvas</h5>
-                        <button type="button" class="btn-close"
-                            data-bs-dismiss="offcanvas"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <ul
-                            class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page"
-                                    href="#">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Link</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#"
-                                    role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Dropdown
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item"
-                                            href="#">Action</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="#">Another action</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            href="#">Something else
-                                            here</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <form class="d-flex mt-3" role="search">
-                            <input class="form-control me-2" type="search"
-                                placeholder="Search" aria-label="Search" />
-                            <button class="btn btn-outline-success"
-                                type="submit">Search</button>
-                        </form>
+                    <div class="text-end">
+                        <p class="m-0 text-end d-block" id="clock-active">Loading clock...</p>
+                        <span>{{date('l, d-m-Y')}}</span>
                     </div>
                 </div>
             </div>
         </nav>
-        <div class="container">
-
+        <div class="container-fluid">
             <div class="row my-3">
-                <div class="col-md-8">
-                    <input type="text" name="code" onchange="findProduct(this.value)" class="form-control form-lg" placeholder="Masukkan kode produk">
+                <div class="col-8">
+                    <table class="table table-responsive table-bordered item-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center" width="25px">No</th>
+                                <th class="text-center">Nama Produk</th>
+                                <th class="text-center" width="100px">Satuan</th>
+                                <th class="text-center" width="100px">Jumlah</th>
+                                <th width="200px" class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
 
-                    <div class="row mt-4">
-                        <table class="table table-responsive">
-
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Produk</th>
-                                    <th>Unit</th>
-                                    <th>Jumlah</th>
-                                    <th>Subtotal</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                            </tbody>
-                            
-
-                        </table>
-                    </div>
-
+                        <tbody>
+                            <tr><td colspan="5"><i>Tidak ada data</i></td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-md-4">
-
-                    <div
-                        class="d-flex justify-content-between align-items-center p-2 border-bottom mb-3">
-                        <h5>Detail Pesanan</h5>
-                    </div>
-
+                <div class="col-4">
                     <ul class="list-group list-group-flush">
-                        <li
-                            class="list-group-item">
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    Diskon
-                                </div>
-
-                                <div class="col-md-6">
-                                    <input type="number" name="discount" onchange="changeDiscount(this.value)" class="form-control" placeholder="Masukkan diskon" value="0">
-                                </div>
-                            </div>
+                        <li class="list-group-item px-0">
+                            <label for="">Diskon</label>
+                            <input type="number" name="discount" onkeyup="reloadTable()" class="form-control text-end" placeholder="Masukkan diskon" value="0">
                         </li>
-                        <li
-                            class="list-group-item">
-                            <input type="number" name="payment_amount" onchange="changePaymentAmount(this.value)" class="form-control" placeholder="Masukkan Jumlah Bayar">
-                        </li>
-                        <li
-                            class="list-group-item">
+                        <li class="list-group-item px-0">
+                            <label for="">Metode Pembayaran</label>
                             <select name="payment_method" class="form-control">
 
                                 @foreach ($paymentMethods as $paymentMethod)
@@ -173,9 +87,11 @@
                                 @endforeach
                             </select>
                         </li>
-
+                        <li class="list-group-item px-0">
+                            <input type="number" name="payment_amount" onkeyup="changePaymentAmount(this.value)" class="form-control text-end" placeholder="Masukkan Jumlah Bayar">
+                        </li>
                         <li
-                            class="list-group-item">
+                            class="list-group-item px-0">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5>Total</h5>
                                 <h5 class="text-danger" id="total">Rp 0</h5>
@@ -186,9 +102,8 @@
                             </div>
                         </li>
 
-                        <li class="list-group-item">
-                            <button
-                                class="btn btn-lg btn-danger w-100" onclick="bayar()">Bayar</button>
+                        <li class="list-group-item px-0">
+                            <button class="btn btn-lg btn-danger w-100" onclick="bayar()">Bayar</button>
                         </li>
 
                     </ul>
@@ -204,10 +119,19 @@
             crossorigin="anonymous"></script>
 
             <script>
+                var selectedItems = []
+                var selectedRow = 1
+
                 function findProduct(code) {
                     fetch('/pos?code=' + code)
                         .then(response => response.json())
                         .then(item => {
+                            if(selectedItems.length == 0)
+                            {
+                                document.querySelector('.item-table tbody').innerHTML = ''
+                            }
+
+                            selectedItems.push(item)
                             var items = document.querySelectorAll('tbody tr');
 
                             var found = document.querySelector(`#item-${item.code}`)
@@ -216,21 +140,22 @@
                                 changeQty(found.querySelector('input[name="qty"]').value, item.code);
                             } else {
                                 var html = `
-                                        <tr id="item-${item.code}">
-                                                <td>${items.length+1} <input type="hidden" name="id" value="${item.id}"></td>
+                                        <tr id="item-${item.code}" class="cart-item" data-code="${item.code}">
+                                                <td width="25px">${items.length+1} <input type="hidden" name="id" value="${item.id}"></td>
                                                 <td>
-                                                    ${item.name}
+                                                    <span class="item-name">${item.name}</span><br>
+                                                    ${item.code} ${item.sku ? '-' + item.sku : ''}
                                                 </td>
-                                                <td>
-                                                    <select name="unit" style="width:150px" class="form-control form-lg" onchange="changeUnit('${item.code}', '${item.price}')">
+                                                <td width="100px">
+                                                    <select name="unit" style="width:100px" class="form-control form-lg" onchange="changeUnit('${item.code}', '${item.price}')">
                                                         <option value="">Pilih Unit</option>
                                                         ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
-                                                         ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
+                                                        ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
                                                     </td>
-                                                <td>
-                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:150px" placeholder="Masukkan jumlah" value="1" onchange="changeQty(this.value, '${item.code}')">
+                                                <td width="100px">
+                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:100px" placeholder="Masukkan jumlah" value="1" onchange="changeQty(this.value, '${item.code}')">
                                                 </td>   
-                                                <td id="price-${item.code}" class="prices" data-price="${item.price}" data-baseprice="${item.price}">
+                                                <td id="price-${item.code}" class="prices text-end" data-price="${item.price}" data-baseprice="${item.price}">
                                                     ${formatNumber(item.price)}
                                                 </td>
     
@@ -243,15 +168,16 @@
                                 }
                                 
                                 document.querySelector('input[name="code"]').value = '';
-                                document.querySelector('input[name="code"]').focus();
+                                updateSelection(1)
+                                // document.querySelector('input[name="code"]').focus();
+                        })
+                        .catch(err => {
+
                         });
                 }      
-                
-                function changeQty(qty, code) {
-                    var selectUnit = document.querySelector(`#item-${code} [name="unit"]`)
-                    var price = selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price')
-                    var subtotal = qty * price;
-                    setSubTotal(code, subtotal, price);
+
+                function reloadTable()
+                {
                     var discount = document.querySelector('input[name="discount"]').value;
                     var subtotals = document.querySelectorAll('.prices');
                     var total = 0;
@@ -260,6 +186,27 @@
                         total += parseInt(price)
                     });
                     setTotal(total-discount);
+
+                    if(selectedItems.length == 0)
+                    {
+                        document.querySelector('tbody').innerHTML = '<td colspan="5"><i>Tidak ada data</i></td>'
+                    }
+                }
+                
+                function changeQty(qty, code) {
+                    if(qty == 0)
+                    {
+                        document.querySelector(`#item-${code}`).remove()
+                        const index = selectedItems.findIndex(itm => itm.code == code)
+                        selectedItems.splice(index, 1)
+                        reloadTable()
+                        return
+                    }
+                    var selectUnit = document.querySelector(`#item-${code} [name="unit"]`)
+                    var price = selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price')
+                    var subtotal = qty * price;
+                    setSubTotal(code, subtotal, price);
+                    reloadTable()
                 }
 
                 function changeUnit(code) {
@@ -268,34 +215,27 @@
                     var price = selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price')
                     var subtotal = price * qty;
                     setSubTotal(code, subtotal, price);
-                    var discount = document.querySelector('input[name="discount"]').value;
-                    var subtotals = document.querySelectorAll('.prices');
-                    var total = 0;
-                    subtotals.forEach((sbtotal) => {
-                        var price = sbtotal.getAttribute('data-price');
-                        total += parseInt(price)
-                    });
-                    setTotal(total-discount);
+                    reloadTable()
                 }
 
                 function formatNumber(num) {
                     return  new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
                 }
 
-                function changeDiscount(discount) {
-                    var subtotals = document.querySelectorAll('.prices');
-                    var total = 0;
-                    subtotals.forEach((subtotal) => {
-                        var price = subtotal.getAttribute('data-price');
-                        total += parseInt(price)
-                    });
-                    setTotal(total-discount);
-                }
+                // function changeDiscount(discount) {
+                //     var subtotals = document.querySelectorAll('.prices');
+                //     var total = 0;
+                //     subtotals.forEach((subtotal) => {
+                //         var price = subtotal.getAttribute('data-price');
+                //         total += parseInt(price)
+                //     });
+                //     setTotal(total-discount);
+                // }
 
                 function changePaymentAmount(payment) {
                     var total = document.getElementById('total').getAttribute('data-price');
                     var change = payment - total;
-                    document.getElementById('change').innerHTML = formatNumber(change);
+                    document.getElementById('change').innerHTML = payment ? formatNumber(change) : 'Rp 0';
                     document.getElementById('change').setAttribute('data-value', change);
                 }
 
@@ -324,11 +264,11 @@
                         var price = parseInt(item.querySelector('.prices').getAttribute('data-baseprice'));
                         items.push({
                             product_id: id,
-                            name: item.querySelector('td:nth-child(2)').innerHTML,
+                            name: item.querySelector('.item-name').innerHTML,
                             qty: parseInt(qty),
                             unit: unit,
                             base_price: price,
-                            total_price: price * qty
+                            total_price: price * qty,
                             final_price: (price * qty) - 0 // 0 as discount
                         });
                     });
@@ -357,8 +297,21 @@
                         discount: discount,
                         payment_amount: parseInt(document.querySelector('input[name="payment_amount"]').value),
                         payment_method: document.querySelector('select[name="payment_method"]').value,
-                        change:  document.getElementById('change').getAttribute('data-value'),
+                        change:  parseInt(document.getElementById('change').getAttribute('data-value')),
                         items: items
+                    }
+
+                    console.log(data)
+
+                    if(data.payment_amount <= 0)
+                    {
+                        alert('Nominal Pembayaran tidak boleh kosong dan harus lebih dari 0')
+                        return
+                    }
+
+                    if(data.change < 0 && data.payment_amount > 0 && !confirm('Nominal Pembayaran kurang dari jumlah yang harus dibayar. Lanjutkan ?'))
+                    {
+                        return
                     }
 
                     fetch('/pos', {
@@ -379,6 +332,107 @@
                         alert('Gagal melakukan transaksi');
                     });
                 }
+
+                var span = document.getElementById('clock-active');
+
+                function time() {
+                    var d = new Date();
+                    var s = d.getSeconds();
+                    var m = d.getMinutes();
+                    var h = d.getHours();
+                    span.textContent = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+                }
+
+                setInterval(time, 1000);
+
+                let barcodeBuffer = '';
+                let lastKeyTime = Date.now();
+
+                document.querySelector('[name="payment_amount"]').addEventListener('keydown', function(e){
+                    if(e.key == 'Enter')
+                    {
+                        bayar()
+                    }
+                })
+
+                document.addEventListener('keydown', function(e) {
+                    const currentTime = Date.now();
+
+                    // Reset buffer kalau jeda terlalu lama
+                    if (currentTime - lastKeyTime > 300) {
+                        barcodeBuffer = '';
+                    }
+
+                    if (e.key === 'Enter') {
+                        const barcode = barcodeBuffer.trim();
+                        barcodeBuffer = '';
+
+                        if (barcode.length > 0) {
+                            console.log('Barcode scanned (global):', barcode);
+                            findProduct(barcode);
+                        }
+                    } else {
+                        barcodeBuffer += e.key;
+                    }
+
+                    lastKeyTime = currentTime;
+
+                    if (e.key === 'ArrowUp') {
+                        updateSelection(selectedRow - 1);
+                    } else if (e.key === 'ArrowDown') {
+                        updateSelection(selectedRow + 1);
+                    } else if (e.key === 'Delete') {
+                        doDelete()
+                    } else if (e.key === '+') {
+                        updateQty(1);
+                    } else if (e.key === '-') {
+                        updateQty(-1);
+                    } else if (e.key === 'End') {
+                        document.querySelector('[name="payment_amount"]').focus()
+                    } else if (e.key === 'd' || e.key === 'D') {
+                        document.querySelector('[name="discount"]').focus()
+                    }
+                });
+
+                function updateSelection(newIndex) {
+                    if(selectedItems.length == 0) return
+
+                    if(newIndex == 0)
+                    {
+                        selectedRow = document.querySelectorAll('.cart-item').length
+                    }
+                    else if(newIndex > document.querySelectorAll('.cart-item').length)
+                    {
+                        selectedRow = 1
+                    }
+                    else
+                    {
+                        selectedRow = newIndex
+                    }
+
+                    document.querySelectorAll('.cart-item').forEach(el => el.classList.remove('selected'))
+                    document.querySelectorAll('.cart-item')[selectedRow-1].classList.add('selected')
+                }
+
+                function updateQty(additional)
+                {
+                    const row = document.querySelectorAll('.cart-item')[selectedRow-1]
+                    row.querySelector('.qty').value = parseInt(row.querySelector('.qty').value) + parseInt(additional)
+                    changeQty(row.querySelector('.qty').value, row.getAttribute('data-code'))
+                }
+
+                function doDelete(){
+                    if(selectedItems.length == 0) return
+                    const row = document.querySelectorAll('.cart-item')[selectedRow-1]
+                    const itemName = row.querySelector('.item-name').innerHTML
+                    if(confirm('Apakah kamu yakin akan menghapus '+ itemName + '?'))
+                    {
+                        row.remove()
+                        selectedItems.splice(selectedRow-1, 1)
+                        selectedRow = 1
+                    }
+                }
+
             </script>
     </body>
 </html>

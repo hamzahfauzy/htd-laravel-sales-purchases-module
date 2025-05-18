@@ -57,12 +57,18 @@ class InvoiceResource extends Resource
 
     public static function form()
     {
+        if(!static::$record)
+        {
+            static::$record = collect([
+                'code' => 'INV-'.strtotime('now').'-'.rand(11111,99999)
+            ]);
+        }
         return [
             'Basic Information' => [
                 'code' => [
                     'label' => 'Code',
                     'type' => 'text',
-                    'placeholder' => 'Enter code'
+                    'placeholder' => 'Enter code',
                 ],
                 // 'total_item' => [
                 //     'label' => 'Total Item',
@@ -93,8 +99,8 @@ class InvoiceResource extends Resource
                     'label' => 'Record Type',
                     'type' => 'select',
                     'options' => [
+                        'PURCHASES' => 'PURCHASES',
                         'SALES' => 'SALES',
-                        'PURCHASES' => 'PURCHASES'
                     ],
                     'required' => true
                 ],
@@ -102,14 +108,14 @@ class InvoiceResource extends Resource
                     'label' => 'Status',
                     'type' => 'select',
                     'options' => [
+                        'PUBLISH' => 'PUBLISH',
                         'DRAFT' => 'DRAFT',
-                        'PUBLISH' => 'PUBLISH'
                     ],
                     'required' => true
                 ],
             ],
             'Item Information' => [
-                
+
             ]
         ];
     }

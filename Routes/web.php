@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AllowedRoute;
 use App\Modules\Inventory\Models\Item;
+use App\Modules\Inventory\Models\ItemConversion;
 use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
 use App\Modules\SalesPurchases\Models\PaymentMethod;
@@ -120,16 +121,26 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             ]);
 
             foreach (request()['items'] as $item) {
+                $_item = Item::where('id', $item['product_id'])->with('conversions')->first();
+                $amount = $item['qty'];
+                $description = 'Sales #' . $invoice->code;
+                if($_item->unit != $item['unit'])
+                {
+                    $conversion = $item->conversions->where('unit', $item['unit'])->first();
+                    $amount = $amount * $conversion->value;
+                    $description .= ' - conversion from '. $item['qty'] . ' ' . $item['unit'] . ' to ' . $amount .' '.$_item->unit; 
+                }
+
                 ItemLog::create([
                     'item_id' => $item['product_id'],
-                    'amount' => $item['qty'],
-                    'unit' => $item['unit'],
+                    'amount' => $amount,
+                    'unit' => $_item->unit,
                     'record_type' => 'OUT',
-                    'description' => 'Sales #' . $invoice->code,
+                    'description' => $description,
                 ]);
             }
 
-            Printer::first()->printStruk([
+            Printer::first()?->printStruk([
                 'toko' => [
                     'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
                     'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
