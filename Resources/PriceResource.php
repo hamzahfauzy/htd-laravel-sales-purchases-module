@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Modules\SalesPurchases\Resources;
+
+use App\Libraries\Abstract\Resource;
+use App\Modules\Inventory\Models\Item;
+use App\Modules\SalesPurchases\Models\Price;
+
+class PriceResource extends Resource
+{
+
+    protected static ?string $navigationGroup = 'Sales & Purchases';
+    protected static ?string $navigationLabel = 'Price';
+    protected static ?string $navigationIcon = 'bx bx-dollar';
+    protected static ?string $slug = 'sales-purchases/prices';
+    protected static ?string $routeGroup = 'sales-purchases';
+
+    protected static $model = Price::class;
+
+    public static function mount()
+    {
+        static::addScripts([
+            asset('modules/salespurchases/js/price-resource.js')
+        ]);
+    }
+
+    public static function table()
+    {
+        return [
+            'product.completeName' => [
+                'label' => 'Product',
+                '_searchable' => true
+            ],
+            'unit' => [
+                'label' => 'Unit',
+                '_searchable' => true
+            ],
+            'amount_1' => [
+                'label' => 'Price 1',
+                '_searchable' => true
+            ],
+            'min_qty_1' => [
+                'label' => 'Minium Qty 1',
+                '_searchable' => true
+            ],
+            'creator.name' => [
+                'label' => 'Created By',
+                '_searchable' => true
+            ],
+            'created_at' => [
+                'label' => 'Date'
+            ],
+            '_action'
+        ];
+    }
+
+    public static function form()
+    {
+        $items = Item::get();
+        $itemOptions = [];
+        foreach($items as $item)
+        {
+            $itemOptions[$item->id] = $item->completeName;
+        }
+
+        return [
+            'Basic Information' => [
+                'product_id' => [
+                    'label' => 'Product',
+                    'type' => 'select',
+                    'options' => $itemOptions,
+                    'placeholder' => 'Choose Product',
+                    'required' => true,
+                ],
+                'unit' => [
+                    'label' => 'Unit',
+                    'type' => 'select',
+                    'options' => [],
+                    'placeholder' => 'Choose unit',
+                    'required' => true,
+                ],
+                'amount_1' => [
+                    'label' => 'Price 1',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter price 1',
+                ],
+                'min_qty_1' => [
+                    'label' => 'Minimum Qty 1',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter minimum qty 1',
+                ],
+            ]
+        ];
+    }
+
+    public static function detail()
+    {
+        return [
+            'Basic Information' => [
+                'product.completeName' => 'Name',
+                'unit' => 'Unit',
+                'amount_1' => 'Price 1',
+                'min_qty_1' => 'Minimum Qty 1',
+            ],
+        ];
+    }
+}

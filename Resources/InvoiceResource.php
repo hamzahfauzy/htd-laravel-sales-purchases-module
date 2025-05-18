@@ -64,31 +64,31 @@ class InvoiceResource extends Resource
                     'type' => 'text',
                     'placeholder' => 'Enter code'
                 ],
-                'total_item' => [
-                    'label' => 'Total Item',
-                    'type' => 'tel',
-                    'placeholder' => 'Enter Total Item',
-                ],
-                'total_qty' => [
-                    'label' => 'Total Qty',
-                    'type' => 'tel',
-                    'placeholder' => 'Enter Total Qty',
-                ],
-                'total_price' => [
-                    'label' => 'Total Price',
-                    'type' => 'tel',
-                    'placeholder' => 'Enter Total Price',
-                ],
-                'total_discount' => [
-                    'label' => 'Total Discount',
-                    'type' => 'tel',
-                    'placeholder' => 'Enter Total Discount',
-                ],
-                'final_price' => [
-                    'label' => 'Final Price',
-                    'type' => 'tel',
-                    'placeholder' => 'Enter Final Price',
-                ],
+                // 'total_item' => [
+                //     'label' => 'Total Item',
+                //     'type' => 'tel',
+                //     'placeholder' => 'Enter Total Item',
+                // ],
+                // 'total_qty' => [
+                //     'label' => 'Total Qty',
+                //     'type' => 'tel',
+                //     'placeholder' => 'Enter Total Qty',
+                // ],
+                // 'total_price' => [
+                //     'label' => 'Total Price',
+                //     'type' => 'tel',
+                //     'placeholder' => 'Enter Total Price',
+                // ],
+                // 'total_discount' => [
+                //     'label' => 'Total Discount',
+                //     'type' => 'tel',
+                //     'placeholder' => 'Enter Total Discount',
+                // ],
+                // 'final_price' => [
+                //     'label' => 'Final Price',
+                //     'type' => 'tel',
+                //     'placeholder' => 'Enter Final Price',
+                // ],
                 'record_type' => [
                     'label' => 'Record Type',
                     'type' => 'select',
@@ -107,7 +107,9 @@ class InvoiceResource extends Resource
                     ],
                     'required' => true
                 ],
-
+            ],
+            'Item Information' => [
+                
             ]
         ];
     }

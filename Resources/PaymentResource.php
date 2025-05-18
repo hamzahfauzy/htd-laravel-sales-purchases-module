@@ -53,10 +53,10 @@ class PaymentResource extends Resource
             $selectedInvoices[$invoice->id] = $invoice->code;
         }
 
-        $PatmentMethod = PaymentMethod::get();
-        $selectedPatmentMethod = [];
-        foreach ($PatmentMethod as $paymentMethod) {
-            $selectedPatmentMethod[$paymentMethod->id] = $paymentMethod->name;
+        $PaymentMethod = PaymentMethod::get();
+        $selectedPaymentMethod = [];
+        foreach ($PaymentMethod as $paymentMethod) {
+            $selectedPaymentMethod[$paymentMethod->id] = $paymentMethod->name;
         }
 
         return [
@@ -71,7 +71,7 @@ class PaymentResource extends Resource
                 'payment_method_id' => [
                     'label' => 'Payment Method',
                     'type' => 'select',
-                    'options' => $selectedPatmentMethod,
+                    'options' => $selectedPaymentMethod,
                     'placeholder' => 'Choose Payment Method',
                     'required' => true,
                 ],
