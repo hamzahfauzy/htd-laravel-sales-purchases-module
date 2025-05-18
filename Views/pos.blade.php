@@ -297,8 +297,21 @@
                         discount: discount,
                         payment_amount: parseInt(document.querySelector('input[name="payment_amount"]').value),
                         payment_method: document.querySelector('select[name="payment_method"]').value,
-                        change:  document.getElementById('change').getAttribute('data-value'),
+                        change:  parseInt(document.getElementById('change').getAttribute('data-value')),
                         items: items
+                    }
+
+                    console.log(data)
+
+                    if(data.payment_amount <= 0)
+                    {
+                        alert('Nominal Pembayaran tidak boleh kosong dan harus lebih dari 0')
+                        return
+                    }
+
+                    if(data.change < 0 && data.payment_amount > 0 && !confirm('Nominal Pembayaran kurang dari jumlah yang harus dibayar. Lanjutkan ?'))
+                    {
+                        return
                     }
 
                     fetch('/pos', {
