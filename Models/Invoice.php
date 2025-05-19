@@ -14,6 +14,17 @@ class Invoice extends Model
     protected $table = 'sp_invoices';
     protected $guarded = ['id'];
 
+    protected static function booted()
+    {
+        // for later
+        // static::retrieved(function ($model) {
+        //     $model->total_price = number_format($model->total_price);
+        //     $model->final_price = number_format($model->final_price);
+        //     $model->total_discount = number_format($model->total_discount);
+        //     $model->total_qty = number_format($model->total_qty);
+        // });
+    }
+
     function items()
     {
         return $this->hasMany(InvoiceItem::class, 'invoice_id', 'id');
@@ -23,4 +34,5 @@ class Invoice extends Model
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
     }
+
 }

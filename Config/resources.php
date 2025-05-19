@@ -11,4 +11,11 @@ return [
     'App\\Modules\\SalesPurchases\\Resources\\PaymentResource',
 
     'App\\Modules\\SalesPurchases\\Resources\\Report\\SalesReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\PurchasesReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\IncomeReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\ExpensesReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\DiscountReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\ReturningReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\PaymentMethodReportResource',
+    'App\\Modules\\SalesPurchases\\Resources\\Report\\VoidReportResource',
 ];

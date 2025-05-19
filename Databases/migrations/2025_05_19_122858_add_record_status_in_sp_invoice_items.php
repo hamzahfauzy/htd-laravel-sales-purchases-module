@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sp_payments', function (Blueprint $table) {
-            $table->decimal('change',15,2)->after('amount')->nullable()->default(0)->comment('Kembalian');
+        Schema::table('sp_invoice_items', function (Blueprint $table) {
+            //
+            $table->string('record_status')->default('DRAFT');
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sp_payments', function (Blueprint $table) {
-            $table->dropColumn('change');
+        Schema::table('sp_invoice_items', function (Blueprint $table) {
+            //
+            $table->dropColumn('record_status');
         });
     }
 };
