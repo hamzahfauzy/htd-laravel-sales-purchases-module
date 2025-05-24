@@ -88,6 +88,8 @@ class Printer extends Model
                 $printer->cut();
             }
 
+            $printer->pulse();
+
             $printer->close();
         } catch (\Exception $e) {
             \Log::error("Printer Error: " . $e->getMessage());
