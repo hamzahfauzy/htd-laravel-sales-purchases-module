@@ -3,7 +3,12 @@
 namespace App\Modules\SalesPurchases\Resources;
 
 use App\Libraries\Abstract\Resource;
+use App\Libraries\Components\Button;
+use App\Libraries\Components\Delete;
+use App\Modules\Inventory\Models\Item;
+use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
+use Illuminate\Http\Request;
 
 class InvoiceResource extends Resource
 {
@@ -15,6 +20,17 @@ class InvoiceResource extends Resource
     protected static ?string $routeGroup = 'sales-purchases';
 
     protected static $model = Invoice::class;
+
+    public static function mount()
+    {
+        if(request()->routeIs('*.edit') || request()->routeIs('*.create'))
+        {
+            static::addScripts([
+                asset('modules/salespurchases/js/autoNumeric.min.js'),
+                asset('modules/salespurchases/js/invoice-item.js')
+            ]);
+        }
+    }
 
     public static function table()
     {
@@ -59,10 +75,17 @@ class InvoiceResource extends Resource
     {
         if(!static::$record)
         {
-            static::$record = collect([
-                'code' => 'INV-'.strtotime('now').'-'.rand(11111,99999)
-            ]);
+            // static::$record = collect([
+            //     'code' => 'INV-'.strtotime('now').'-'.rand(11111,99999),
+            //     'invoice_discount' => 0,
+            // ]);
+
+            static::$record = new static::$model;
+            static::$record->code = 'INV-'.strtotime('now').'-'.rand(11111,99999);
+            static::$record->invoice_discount = 0;
+            static::$record->items = [];
         }
+        
         return [
             'Basic Information' => [
                 'code' => [
@@ -70,31 +93,34 @@ class InvoiceResource extends Resource
                     'type' => 'text',
                     'placeholder' => 'Enter code',
                 ],
-                // 'total_item' => [
-                //     'label' => 'Total Item',
-                //     'type' => 'tel',
-                //     'placeholder' => 'Enter Total Item',
-                // ],
-                // 'total_qty' => [
-                //     'label' => 'Total Qty',
-                //     'type' => 'tel',
-                //     'placeholder' => 'Enter Total Qty',
-                // ],
-                // 'total_price' => [
-                //     'label' => 'Total Price',
-                //     'type' => 'tel',
-                //     'placeholder' => 'Enter Total Price',
-                // ],
-                // 'total_discount' => [
-                //     'label' => 'Total Discount',
-                //     'type' => 'tel',
-                //     'placeholder' => 'Enter Total Discount',
-                // ],
-                // 'final_price' => [
-                //     'label' => 'Final Price',
-                //     'type' => 'tel',
-                //     'placeholder' => 'Enter Final Price',
-                // ],
+                'total_item' => [
+                    'label' => 'Total Item',
+                    'type' => 'text',
+                    'placeholder' => 'Total Item',
+                    'readonly' => 'readonly'
+                ],
+                'total_qty' => [
+                    'label' => 'Total Qty',
+                    'type' => 'text',
+                    'placeholder' => 'Total Qty',
+                    'readonly' => 'readonly'
+                ],
+                'total_price' => [
+                    'label' => 'Total Price',
+                    'type' => 'text',
+                    'placeholder' => 'Total Price',
+                    'readonly' => 'readonly'
+                ],
+                'invoice_discount' => [
+                    'label' => 'Discount',
+                    'type' => 'tel',
+                ],
+                'final_price' => [
+                    'label' => 'Final Price',
+                    'type' => 'text',
+                    'placeholder' => 'Final Price',
+                    'readonly' => 'readonly'
+                ],
                 'record_type' => [
                     'label' => 'Record Type',
                     'type' => 'select',
@@ -108,15 +134,15 @@ class InvoiceResource extends Resource
                     'label' => 'Status',
                     'type' => 'select',
                     'options' => [
-                        'PUBLISH' => 'PUBLISH',
                         'DRAFT' => 'DRAFT',
+                        'PUBLISH' => 'PUBLISH',
                     ],
                     'required' => true
                 ],
             ],
-            'Item Information' => [
-
-            ]
+            'Item Information' => view('sales-purchases::invoices.item-field', [
+                'data' => static::$record
+            ])->render()
         ];
     }
 
@@ -128,11 +154,147 @@ class InvoiceResource extends Resource
                 'total_item' => 'Total Item',
                 'total_qty' => 'Total Qty',
                 'total_price' => 'Total Price',
+                'invoice_discount' => 'Invoice Discount',
+                'item_discount' => 'Item Discount',
                 'total_discount' => 'Total Discount',
                 'final_price' => 'Final Price',
                 'record_type' => 'Record Type',
                 'record_status' => 'Record Status',
             ],
+            'Item List' => view('sales-purchases::invoices.detail-item', [
+                'data' => static::$record
+            ])->render()
         ];
+    }
+
+    public static function detailHeader()
+    {
+        $button = [
+            (new Button([
+                'url' => static::getPageRoute('index'),
+                'class' => 'btn btn-sm btn-outline-secondary',
+                'label' => 'Back',
+                'icon' => 'fas fa-fw fa-arrow-left'
+            ]))
+                ->routeName(static::getPageRouteName('index'))
+                ->render()
+        ];
+
+        if(static::$record->record_status == 'DRAFT')
+        {
+            $button[] = (new Button([
+                    'url' => static::getPageRoute('edit', ['id' => static::$record?->id]),
+                    'class' => 'btn btn-sm btn-warning',
+                    'label' => 'Edit',
+                    'icon' => 'fas fa-fw fa-pencil'
+                ]))
+                    ->routeName(static::getPageRouteName('edit'))
+                    ->render();
+        }
+
+        return [
+            'title' => 'Detail ' . static::$navigationLabel,
+            'button' => $button
+        ];
+    }
+
+    public static function getAction($d)
+    {
+        $buttons = [
+            'view' => (new Button([
+                'url' => static::getPageRoute('detail', ['id' => $d->id]),
+                'label' => 'Detail',
+                'class' => 'dropdown-item',
+                'icon' => 'fas fa-fw fa-eye'
+            ]))
+            ->routeName(static::getPageRouteName('detail'))
+            ->render(),
+            'edit' => (new Button([
+                'url' => static::getPageRoute('edit', ['id' => $d->id]),
+                'label' => 'Edit',
+                'class' => 'dropdown-item',
+                'icon' => 'fas fa-fw fa-pencil'
+            ]))
+            ->routeName(static::getPageRouteName('edit'))
+            ->render(),
+            'delete' => (new Delete([
+                'url' => static::getPageRoute('delete', ['id' => $d->id]),
+                'label' => 'Delete',
+                'class' => 'dropdown-item text-danger delete-record',
+                'icon' => 'fas fa-fw fa-trash'
+            ]))
+            ->routeName(static::getPageRouteName('delete'))
+            ->render()
+        ];
+
+        if($d->record_status == 'PUBLISH')
+        {
+            unset($buttons['edit']);
+        }
+
+        return view('libraries.components.actions', compact('buttons'))->render();
+    }
+
+    public static function afterCreate(Request $request, $data)
+    {
+        foreach($request->items as $item)
+        {
+            $data->items()->create($item);
+
+            if($data->record_status == 'PUBLISH')
+            {
+
+                $_item = Item::where('id', $item['product_id'])->with('conversions')->first();
+                $amount = $item['qty'];
+                $description = $data->record_type.' #' . $data->code;
+                if($_item->unit != $item['unit'])
+                {
+                    $conversion = $_item->conversions->where('unit', $item['unit'])->first();
+                    $amount = $amount * $conversion->value;
+                    $description .= ' - conversion from '. $item['qty'] . ' ' . $item['unit'] . ' to ' . $amount .' '.$_item->unit; 
+                }
+            
+                ItemLog::create([
+                    'item_id' => $item['product_id'],
+                    'amount' => $amount,
+                    'unit' => $_item->unit,
+                    'record_type' => $data->record_type == 'SALES' ? 'OUT' : 'IN',
+                    'description' => $description,
+                ]);
+            }
+
+        }
+    }
+    
+    public static function afterUpdate(Request $request, $data)
+    {
+        $data->items()->delete();
+
+        foreach($request->items as $item)
+        {
+            $data->items()->create($item);
+
+            if($data->record_status == 'PUBLISH')
+            {
+
+                $_item = Item::where('id', $item['product_id'])->with('conversions')->first();
+                $amount = $item['qty'];
+                $description = $data->record_type.' #' . $data->code;
+                if($_item->unit != $item['unit'])
+                {
+                    $conversion = $_item->conversions->where('unit', $item['unit'])->first();
+                    $amount = $amount * $conversion->value;
+                    $description .= ' - conversion from '. $item['qty'] . ' ' . $item['unit'] . ' to ' . $amount .' '.$_item->unit; 
+                }
+
+                ItemLog::create([
+                    'item_id' => $item['product_id'],
+                    'amount' => $amount,
+                    'unit' => $_item->unit,
+                    'record_type' => $data->record_type == 'SALES' ? 'OUT' : 'IN',
+                    'description' => $description,
+                ]);
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sp_invoice_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('invoice_id')->nullable();
-            $table->foreign('invoice_id')->references('id')->on('sp_invoices')->onDelete('restrict');
+            $table->foreign('invoice_id')->references('id')->on('sp_invoices')->onDelete('cascade');
 
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('inv_items')->onDelete('restrict');
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->decimal('final_price', 15, 2)->default(0);
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

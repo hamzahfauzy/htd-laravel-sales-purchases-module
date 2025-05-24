@@ -13,6 +13,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
+    Route::prefix('sales-purchases')->group(function(){
+        Route::get('products', [\App\Modules\SalesPurchases\Controllers\ProductController::class,'get'])->name('products.get');
+    });
+
     Route::get('import', function () {
 
         $inputFileName = public_path('products.xlsx');
@@ -102,11 +106,12 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         try {
 
             $invoice = Invoice::create([
-                "code" => "INV-" . date('YmdHis'),
+                "code" => 'INV-'.strtotime('now').'-'.rand(11111,99999),
                 "total_item" => request()['total_item'],
                 "total_price" => request()['total_price'],
                 "total_qty" => request()['total_qty'],
                 "final_price" => request()['final_price'],
+                "invoice_discount" => request()['discount'],
                 "total_discount" => request()['discount'],
                 "record_status" => "PUBLISH",
             ]);
@@ -126,7 +131,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                 $description = 'Sales #' . $invoice->code;
                 if($_item->unit != $item['unit'])
                 {
-                    $conversion = $item->conversions->where('unit', $item['unit'])->first();
+                    $conversion = $_item->conversions->where('unit', $item['unit'])->first();
                     $amount = $amount * $conversion->value;
                     $description .= ' - conversion from '. $item['qty'] . ' ' . $item['unit'] . ' to ' . $amount .' '.$_item->unit; 
                 }
