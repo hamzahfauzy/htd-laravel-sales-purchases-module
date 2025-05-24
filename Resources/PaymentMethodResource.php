@@ -27,6 +27,14 @@ class PaymentMethodResource extends Resource
                 'label' => 'Description',
                 '_searchable' => true
             ],
+            'creator.name' => [
+                'label' => 'Created By',
+                '_searchable' => false
+            ],
+            'created_at' => [
+                'label' => 'Date',
+                '_searchable' => false
+            ],
             '_action'
         ];
     }

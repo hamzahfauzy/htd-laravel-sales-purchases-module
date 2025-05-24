@@ -37,7 +37,6 @@ class DashboardService
             ->join('sp_invoices', 'sp_invoices.id', '=', 'sp_invoice_items.invoice_id')
             ->select(
                 'inv_items.name',
-                DB::raw('SUM(sp_invoice_items.qty) as total_qty'),
                 DB::raw('SUM(sp_invoice_items.final_price) as total_sales')
             )
             ->groupBy('sp_invoice_items.product_id', 'inv_items.name')
@@ -50,10 +49,13 @@ class DashboardService
         $topProducts = DB::table('sp_invoice_items')
             ->join('inv_items', 'sp_invoice_items.product_id', '=', 'inv_items.id')
             ->join('sp_invoices', 'sp_invoices.id', '=', 'sp_invoice_items.invoice_id')
+            ->join('inv_item_conversions', function ($join) {
+                $join->on('inv_items.id', '=', 'inv_item_conversions.item_id')
+                    ->on('inv_items.unit', '=', 'inv_item_conversions.unit');
+            })
             ->select(
                 'inv_items.name',
-                DB::raw('SUM(sp_invoice_items.qty) as total_qty'),
-                DB::raw('SUM(sp_invoice_items.final_price) as total_sales')
+                DB::raw('SUM(CASE WHEN inv_item_conversions.value IS NULL THEN sp_invoice_items.qty ELSE sp_invoice_items.qty*inv_item_conversions.value END) as total_qty')
             )
             ->groupBy('sp_invoice_items.product_id', 'inv_items.name')
             ->orderByDesc('total_qty') // atau 'total_qty' untuk produk terjual terbanyak

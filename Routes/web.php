@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Middleware\AllowedRoute;
 use App\Modules\Inventory\Models\Item;
-use App\Modules\Inventory\Models\ItemConversion;
 use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
 use App\Modules\SalesPurchases\Models\PaymentMethod;
@@ -22,64 +20,40 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
     Route::get('import', function () {
 
-        $inputFileName = public_path('products.xlsx');
+        $inputFileName = public_path('modules/salespurchases/products.xlsx');
         try {
             $spreadsheet = IOFactory::load($inputFileName);
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray();
-            $raw = [];
             foreach ($data as $i => $row) {
-                if ($i == 0 || empty($row[1]) || empty($row[2]) || empty($row[4]) || empty($row[6])) continue;
-                $raw['code'][] = $row[1];
-                $raw['name'][] = $row[2];
-                $raw['price'][] = $row[11];
+                if ($i == 0) continue;
+                $code = $row[0];
+                $name = $row[1];
+                $unit = $row[2];
+                $purchase_price = $row[3];
+                $sell_price = $row[4];
+                $low_stock_alert = $row[5];
 
-                $raw['base_unit_code'][] = $row[4];
-                $raw['base_unit_value'][] = $row[5];
+                if(empty($name)) continue;
 
-                $raw['sec_units_code'][] = $row[6];
-                $raw['sec_units_value'][] = $row[7];
-            }
+                if(Item::where('code', $code)->exists()) continue;
 
-            $new = [];
-            for ($i = 0; $i < count($raw['code']); $i++) {
-                $new[] = [
-                    'code' => $raw['code'][$i],
-                    'name' => $raw['name'][$i],
-                    'price' => str_replace(',00', '', str_replace('.', '', $raw['price'][$i])),
-                    'units' => [
-                        'base' => [
-                            'code' => $raw['base_unit_code'][$i],
-                            'value' => $raw['base_unit_value'][$i],
-                        ],
-                        'secondary' => [
-                            'code' => $raw['sec_units_code'][$i],
-                            'value' => $raw['sec_units_value'][$i],
-                        ],
-                    ],
-                ];
-            }
-
-            foreach ($new as $item) {
                 $itemModel = Item::create([
-                    'code' => $item['code'],
-                    'name' => $item['name'],
-                    'unit' => $item['units']['base']['code'],
-                ]);
-
-                $itemModel->conversions()->create([
-                    'unit' => $item['units']['secondary']['code'],
-                    'value' => $item['units']['secondary']['value'],
+                    'code' => $code,
+                    'name' => $name,
+                    'unit' => $unit,
+                    'low_stock_alert' => $low_stock_alert,
                 ]);
 
                 Price::create([
                     'product_id' => $itemModel->id,
-                    'unit' => $item['units']['base']['code'],
-                    'amount_1' => $item['price'],
+                    'unit' => $unit,
+                    'purchase_price' => $purchase_price,
+                    'amount_1' => $sell_price,
                 ]);
             }
-
-            return "Successfully imported " . count($new) . " items";
+            
+            return "Successfully imported " . count($data)-1 . " items";
         } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
             die('Error loading file: ' . $e->getMessage());
         }

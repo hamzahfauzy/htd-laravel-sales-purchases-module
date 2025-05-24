@@ -35,12 +35,16 @@ class PriceResource extends Resource
                 'label' => 'Unit',
                 '_searchable' => true
             ],
+            'purchase_price' => [
+                'label' => 'Purchase Price',
+                '_searchable' => true
+            ],
             'amount_1' => [
-                'label' => 'Price 1',
+                'label' => 'Price',
                 '_searchable' => true
             ],
             'min_qty_1' => [
-                'label' => 'Minium Qty 1',
+                'label' => 'Minium Qty',
                 '_searchable' => true
             ],
             'creator.name' => [
@@ -89,15 +93,20 @@ class PriceResource extends Resource
                     'placeholder' => 'Choose unit',
                     'required' => true,
                 ],
-                'amount_1' => [
-                    'label' => 'Price 1',
+                'purchase_price' => [
+                    'label' => 'Purchase Price',
                     'type' => 'tel',
-                    'placeholder' => 'Enter price 1',
+                    'placeholder' => 'Enter price',
+                ],
+                'amount_1' => [
+                    'label' => 'Price',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter price',
                 ],
                 'min_qty_1' => [
-                    'label' => 'Minimum Qty 1',
+                    'label' => 'Minimum Qty',
                     'type' => 'tel',
-                    'placeholder' => 'Enter minimum qty 1',
+                    'placeholder' => 'Enter minimum qty',
                 ],
             ]
         ];
@@ -109,8 +118,9 @@ class PriceResource extends Resource
             'Basic Information' => [
                 'product.completeName' => 'Name',
                 'unit' => 'Unit',
-                'amount_1' => 'Price 1',
-                'min_qty_1' => 'Minimum Qty 1',
+                'purchase_price' => 'Purchase Price',
+                'amount_1' => 'Price',
+                'min_qty_1' => 'Minimum Qty',
             ],
         ];
     }

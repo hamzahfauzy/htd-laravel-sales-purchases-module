@@ -11,13 +11,17 @@
                     <td>Product</td>
                     <td>Total Sales</td>
                 </tr>
-                @foreach($topSales as $key => $product)
+                @forelse($topSales as $key => $product)
                 <tr>
                     <td>{{$key+1}}</td>
                     <td>{{$product->name}}</td>
                     <td>{{number_format($product->total_sales)}}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="3" class="text-center"><i>No Data</i></td>
+                </tr>
+                @endforelse
               </table>
             </div>
         </div>
@@ -34,13 +38,17 @@
                     <td>Product</td>
                     <td>Total Transaction</td>
                 </tr>
-                @foreach($topProducts as $key => $product)
+                @forelse($topProducts as $key => $product)
                 <tr>
                     <td>{{$key+1}}</td>
                     <td>{{$product->name}}</td>
                     <td>{{number_format($product->total_qty)}}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="3" class="text-center"><i>No Data</i></td>
+                </tr>
+                @endforelse
               </table>
             </div>
         </div>
@@ -57,13 +65,17 @@
                     <td>Product</td>
                     <td>Stock</td>
                 </tr>
-                @foreach($lowStockProducts as $key => $product)
+                @forelse($lowStockProducts as $key => $product)
                 <tr>
                     <td>{{$key+1}}</td>
                     <td>{{$product->name}}</td>
                     <td>{{number_format($product->stock)}}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="3" class="text-center"><i>No Data</i></td>
+                </tr>
+                @endforelse
               </table>
             </div>
         </div>

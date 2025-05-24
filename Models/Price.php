@@ -14,6 +14,16 @@ class Price extends Model
     protected $table = 'sp_prices';
     protected $guarded = ['id'];
 
+    protected static function booted()
+    {
+        // for later
+        static::retrieved(function ($model) {
+            $model->purchase_price = number_format($model->purchase_price);
+            $model->amount_1 = number_format($model->amount_1);
+            $model->min_qty_1 = number_format($model->min_qty_1);
+        });
+    }
+
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -22,7 +32,7 @@ class Price extends Model
      */
     protected function serializeDate(\DateTimeInterface $date)
     {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format('d-m-Y H:i:s');
     }
     
     public function product()
