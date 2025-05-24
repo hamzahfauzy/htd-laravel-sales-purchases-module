@@ -17,11 +17,11 @@ class Price extends Model
     protected static function booted()
     {
         // for later
-        static::retrieved(function ($model) {
-            $model->purchase_price = number_format($model->purchase_price);
-            $model->amount_1 = number_format($model->amount_1);
-            $model->min_qty_1 = number_format($model->min_qty_1);
-        });
+        // static::retrieved(function ($model) {
+        //     $model->purchase_price = number_format($model->purchase_price);
+        //     $model->amount_1 = number_format($model->amount_1);
+        //     $model->min_qty_1 = number_format($model->min_qty_1);
+        // });
     }
 
     /**

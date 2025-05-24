@@ -12,6 +12,8 @@
             crossorigin="anonymous">
         <script src="https://kit.fontawesome.com/b767cc3895.js"
             crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/css/select2-bootstrap-5-theme.css') }}" />
 
         <style>
             .like-card {
@@ -25,6 +27,9 @@
             .cart-item.selected td {
                 background-color:#c2c2fd;
             }
+            .select2 {
+                width: 100%;
+            }
         </style>
     </head>
     <body>
@@ -34,8 +39,9 @@
                     <div class="d-flex align-items-center" style="gap:8px">
                         <img src="{{config('app.logo')}}" alt="" height="80px">
                     </div>
-                    <div class="d-flex position-relative d-none d-md-block" role="search" style="max-width: 450px;width:100%;">
+                    <div class="d-flex justify-content-between position-relative d-none d-md-flex" role="search" style="max-width: 450px;width:100%;">
                         <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
                     </div>
                     <div class="d-flex">
                         <div class="text-end me-4">
@@ -136,6 +142,32 @@
             </div>
         </div>
 
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="productModalLabel">Products</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Produk</label>
+                            <?php $items = \App\Modules\SalesPurchases\Models\Product::orderBy('name','asc')->get(); ?>
+                            <select name="modal_product_id" id="modal_product_id" class="form-control form-select select2">
+                                @foreach ($items as $item)
+                                <option value="{{$item->code}}">{{$item->completeName}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-product-close" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" type="button" onclick="addItem()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal -->
         <div class="modal fade" id="voidModal" tabindex="-1" aria-labelledby="voidModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -186,8 +218,16 @@
 
 
             <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+            <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
+            <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
+            <script src="{{asset('assets/js/select2.js')}}"></script>
 
             <script>
+                $('.select2').select2({
+                    theme: 'bootstrap-5',
+                    dropdownParent: $("#productModal")
+                });
+                
                 var selectedItems = []
                 var selectedRow = 1
                 var invoice_code = ''
@@ -653,6 +693,13 @@
 
                     updateSelection(1)
                     reloadTable()
+                }
+
+                function addItem()
+                {
+                    const code = $('#modal_product_id').val()
+                    findProduct(code)
+                    $('.btn-product-close').trigger('click')
                 }
             </script>
     </body>
