@@ -80,8 +80,8 @@ class Printer extends Model
 
             // Footer
             $printer->setJustification(PosPrinter::JUSTIFY_CENTER);
-            $printer->text("Terima kasih\n");
-            $printer->text("Silahkan datang kembali\n");
+            $footerText = env('PRINT_FOOTER_TEXT', "Terima kasih\nSilahkan datang kembali\n");
+            $printer->text($footerText);
 
             $printer->feed(1);
             if ($this->auto_cut == 'YES') {
