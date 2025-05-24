@@ -32,22 +32,28 @@
             <div class="container-fluid">
                 <div class="d-flex justify-content-between w-100 align-items-center">
                     <div class="d-flex align-items-center" style="gap:8px">
-                        <div
-                            class="bg-white rounded-circle text-secondary d-flex justify-content-center align-items-center"
-                            style="width: 40px; height: 40px;">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 class="m-0">{{auth()->user()->name}}</h6>
-                            <span style="font-size: 12px;">{!! auth()->user()->userRoleLabel !!}</span>
-                        </div>
+                        <img src="{{config('app.logo')}}" alt="" height="80px">
                     </div>
-                    <div class="d-flex position-relative d-none d-md-block" role="search" style="max-width: 350px;width:100%;">
+                    <div class="d-flex position-relative d-none d-md-block" role="search" style="max-width: 450px;width:100%;">
                         <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
                     </div>
-                    <div class="text-end">
-                        <p class="m-0 text-end d-block" id="clock-active">Loading clock...</p>
-                        <span>{{date('l, d-m-Y')}}</span>
+                    <div class="d-flex">
+                        <div class="text-end me-4">
+                            <h3 class="m-0 text-end d-block" id="clock-active">Loading clock...</h3>
+                            <span>{{date('l, d-m-Y')}}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex flex-column justify-content-center text-end me-2">
+                                <h6 class="m-0">{{auth()->user()->name}}</h6>
+                                <span style="font-size: 12px;">{!! auth()->user()->userRoleLabel !!}</span>
+                            </div>
+                            <a href="{{route('home')}}">
+                                <div class="bg-white rounded-circle text-secondary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,7 +77,7 @@
                             </thead>
     
                             <tbody>
-                                <tr><td colspan="5"><i>Tidak ada data</i></td></tr>
+                                <tr><td colspan="5" class="text-center"><i>Tidak ada data</i></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -87,7 +93,7 @@
                         </li>
                         <li class="list-group-item px-0">
                             <label for="">Metode Pembayaran</label>
-                            <select name="payment_method" class="form-control">
+                            <select name="payment_method" class="form-control form-select">
 
                                 @foreach ($paymentMethods as $paymentMethod)
                                     <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
@@ -104,8 +110,8 @@
                         <li
                             class="list-group-item px-0">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5>Total</h5>
-                                <h5 class="text-danger" id="total">Rp 0</h5>
+                                <h2>Total</h2>
+                                <h2 class="text-danger" id="total">Rp 0</h2>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span>Kembalian</span>
@@ -118,7 +124,14 @@
                         </li>
 
                     </ul>
-
+                    <code>
+<pre>
+[Atas/Bawah] > Memilih item   [+] > Tambah kuantiti
+[D] > Input Diskon            [-] > Kurang kuantiti
+[End] > Input Pembayaran      [Enter] > Bayar
+[V] > Void transaksi          [R] > Retur transaksi
+</pre>
+                    </code>
                 </div>
             </div>
         </div>
@@ -491,7 +504,7 @@
                 {
                     const row = document.querySelectorAll('.cart-item')[selectedRow-1]
                     const newVal = parseInt(row.querySelector('.qty').value) + parseInt(additional)
-                    if(newVal > row.querySelector('.qty').max) return
+                    if(row.querySelector('.qty').max && newVal > row.querySelector('.qty').max) return
                     row.querySelector('.qty').value = newVal
                     changeQty(row.querySelector('.qty').value, row.getAttribute('data-code'))
                 }
