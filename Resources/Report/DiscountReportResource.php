@@ -10,7 +10,7 @@ class DiscountReportResource extends Resource {
 
     protected static ?string $navigationGroup = 'Reports';
     protected static ?string $navigationLabel = 'Discount Report';
-    protected static ?string $navigationIcon = 'bx bx-file';
+    protected static ?string $navigationIcon = 'bx bxs-file-export';
     protected static ?string $slug = 'reports/discount';
     protected static ?string $routeGroup = 'reports';
     protected static $deleteRoute = false;

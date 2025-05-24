@@ -46,8 +46,9 @@ class Printer extends Model
 
             // Info transaksi
             $printer->setJustification(PosPrinter::JUSTIFY_LEFT);
+            $printer->text("No.    : " . $data['code'] . "\n");
             $printer->text("Kasir  : " . $data['kasir'] . "\n");
-            $printer->text("Tanggal: " . $data['tanggal'] . "\n");
+            $printer->text("Tanggal: " . (new \Carbon\Carbon($data['tanggal']))->format('d-m-Y H:i:s') . "\n");
             $printer->text(str_repeat("-", $paperSize) . "\n");
 
             // Items
@@ -80,7 +81,7 @@ class Printer extends Model
             // Footer
             $printer->setJustification(PosPrinter::JUSTIFY_CENTER);
             $printer->text("Terima kasih\n");
-            $printer->text("Silakan datang kembali\n");
+            $printer->text("Silahkan datang kembali\n");
 
             $printer->feed(1);
             if ($this->auto_cut == 'YES') {

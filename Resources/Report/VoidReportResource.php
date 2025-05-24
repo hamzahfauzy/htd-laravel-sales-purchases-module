@@ -10,7 +10,7 @@ class VoidReportResource extends Resource {
 
     protected static ?string $navigationGroup = 'Reports';
     protected static ?string $navigationLabel = 'Void Report';
-    protected static ?string $navigationIcon = 'bx bx-file';
+    protected static ?string $navigationIcon = 'bx bxs-file-export';
     protected static ?string $slug = 'reports/void';
     protected static ?string $routeGroup = 'reports';
     protected static $deleteRoute = false;

@@ -8,6 +8,7 @@ use App\Modules\SalesPurchases\Models\Invoice;
 use App\Modules\SalesPurchases\Models\PaymentMethod;
 use App\Modules\SalesPurchases\Models\Price;
 use App\Modules\SalesPurchases\Models\Printer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -15,6 +16,8 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
     Route::prefix('sales-purchases')->group(function(){
         Route::get('products', [\App\Modules\SalesPurchases\Controllers\ProductController::class,'get'])->name('products.get');
+        Route::post('void-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'voidSales'])->name('sales.void');
+        Route::post('return-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'returnSales'])->name('sales.return');
     });
 
     Route::get('import', function () {
@@ -101,48 +104,58 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         return view('sales-purchases::pos', compact('paymentMethods'));
     });
 
-    Route::post('pos', function () {
+    Route::post('pos', function (Request $request) {
 
-        try {
-
-            $invoice = Invoice::create([
-                "code" => 'INV-'.strtotime('now').'-'.rand(11111,99999),
-                "total_item" => request()['total_item'],
-                "total_price" => request()['total_price'],
-                "total_qty" => request()['total_qty'],
-                "final_price" => request()['final_price'],
-                "invoice_discount" => request()['discount'],
-                "total_discount" => request()['discount'],
-                "record_status" => "PUBLISH",
+        if($request->code)
+        {
+            // update
+            $invoice = Invoice::where('code', $request->code)->first();
+            $invoice->update([
+                "total_item" => $request->total_item,
+                "total_price" => $request->total_price,
+                "total_qty" => $request->total_qty,
+                "final_price" => $request->final_price,
+                "invoice_discount" => $request->discount,
+                "total_discount" => $request->discount,
             ]);
 
-            $invoice->items()->createMany(request()['items']);
+            $oldItems = $invoice->items()->get()->keyBy('product_id');
+            $incomingItems = collect($request->items);
 
-            $invoice->payment()->create([
-                'payment_method_id' => request()['payment_method'],
-                'amount' => request()['payment_amount'],
-                'change' => request()['change'],
-                "record_status" => "PUBLISH",
-            ]);
+            // Ambil ID dari item yang dikirim
+            $receivedIds = $incomingItems->pluck('product_id')->filter()->all();
 
-            foreach (request()['items'] as $item) {
-                $_item = Item::where('id', $item['product_id'])->with('conversions')->first();
-                $amount = $item['qty'];
-                $description = 'Sales #' . $invoice->code;
-                if($_item->unit != $item['unit'])
-                {
-                    $conversion = $_item->conversions->where('unit', $item['unit'])->first();
-                    $amount = $amount * $conversion->value;
-                    $description .= ' - conversion from '. $item['qty'] . ' ' . $item['unit'] . ' to ' . $amount .' '.$_item->unit; 
+            foreach ($incomingItems as $item) {
+                // Update hanya jika qty berubah
+                if ($oldItems->has($item['product_id'])) {
+                    $old = $oldItems[$item['product_id']];
+                    if ($old->qty != $item['qty']) {
+                        $margin = $old->qty - $item['qty'];
+                        $old->update($item);
+                        
+                        // selisih
+                        ItemLog::create([
+                            'item_id' => $item['product_id'],
+                            'amount' => $margin,
+                            'unit' => $item['unit'],
+                            'record_type' => 'IN',
+                            'description' => 'RETURN ITEM FROM SALES #'.$request->code,
+                        ]);
+                    }
                 }
+            }
 
+            $deletedItems = $oldItems->whereNotIn('product_id', $receivedIds);
+            foreach ($deletedItems as $item) {
                 ItemLog::create([
-                    'item_id' => $item['product_id'],
-                    'amount' => $amount,
-                    'unit' => $_item->unit,
-                    'record_type' => 'OUT',
-                    'description' => $description,
+                    'item_id' => $item->product_id,
+                    'amount' => $item->qty,
+                    'unit' => $item->unit,
+                    'record_type' => 'IN',
+                    'description' => 'RETURN ITEM FROM SALES #'.$request->code,
                 ]);
+
+                $item->delete();
             }
 
             Printer::first()?->printStruk([
@@ -152,6 +165,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                     'telepon' => env('STORE_PHONE', '0812-3456-7890'),
                 ],
                 'kasir' => auth()->user()->name,
+                'code' => $invoice->code,
                 'tanggal' => date('Y-m-d H:i:s'),
                 'items' => request()['items'],
                 'bayar' => request()['payment_amount'],
@@ -159,16 +173,82 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
             return response()->json([
                 'status' => true,
-                'message' => 'Transaksi berhasil',
+                'message' => 'Transaksi Update',
                 'data' => $invoice
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Transaksi gagal',
-                'error' => $e->getMessage()
-            ]);
         }
+        else
+        {
+            try {
+    
+                $invoice = Invoice::create([
+                    "code" => 'INV-'.strtotime('now').'-'.rand(11111,99999),
+                    "total_item" => request()['total_item'],
+                    "total_price" => request()['total_price'],
+                    "total_qty" => request()['total_qty'],
+                    "final_price" => request()['final_price'],
+                    "invoice_discount" => request()['discount'],
+                    "total_discount" => request()['discount'],
+                    "record_status" => "PUBLISH",
+                ]);
+    
+                $invoice->items()->createMany(request()['items']);
+    
+                $invoice->payment()->create([
+                    'payment_method_id' => request()['payment_method'],
+                    'amount' => request()['payment_amount'],
+                    'change' => request()['change'],
+                    "record_status" => "PUBLISH",
+                    'reference' => request('payment_reference')
+                ]);
+    
+                foreach (request()['items'] as $item) {
+                    $_item = Item::where('id', $item['product_id'])->with('conversions')->first();
+                    $amount = $item['qty'];
+                    $description = 'Sales #' . $invoice->code;
+                    if($_item->unit != $item['unit'])
+                    {
+                        $conversion = $_item->conversions->where('unit', $item['unit'])->first();
+                        $amount = $amount * $conversion->value;
+                        $description .= ' - conversion from '. $item['qty'] . ' ' . $item['unit'] . ' to ' . $amount .' '.$_item->unit; 
+                    }
+    
+                    ItemLog::create([
+                        'item_id' => $item['product_id'],
+                        'amount' => $amount,
+                        'unit' => $_item->unit,
+                        'record_type' => 'OUT',
+                        'description' => $description,
+                    ]);
+                }
+    
+                Printer::first()?->printStruk([
+                    'toko' => [
+                        'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
+                        'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
+                        'telepon' => env('STORE_PHONE', '0812-3456-7890'),
+                    ],
+                    'kasir' => auth()->user()->name,
+                    'code' => $invoice->code,
+                    'tanggal' => date('Y-m-d H:i:s'),
+                    'items' => request()['items'],
+                    'bayar' => request()['payment_amount'],
+                ]);
+    
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Transaksi berhasil',
+                    'data' => $invoice
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Transaksi gagal',
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+
     });
 
     Route::get('print-tes', function () {

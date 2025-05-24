@@ -10,7 +10,7 @@ class PurchasesReportResource extends Resource {
 
     protected static ?string $navigationGroup = 'Reports';
     protected static ?string $navigationLabel = 'Purchases Report';
-    protected static ?string $navigationIcon = 'bx bx-file';
+    protected static ?string $navigationIcon = 'bx bxs-file-export';
     protected static ?string $slug = 'reports/purchases';
     protected static ?string $routeGroup = 'reports';
     protected static $deleteRoute = false;
@@ -41,7 +41,7 @@ class PurchasesReportResource extends Resource {
                         ->join('inv_items','inv_items.id','=','sp_invoice_items.product_id')
                         ->groupBy('sp_invoice_items.product_id','sp_invoice_items.unit')
                         ->where('sp_invoices.record_status','PUBLISH')
-                        ->where('sp_invoices.record_type','PURCHASE');
+                        ->where('sp_invoices.record_type','PURCHASES');
 
         return $model;
     }

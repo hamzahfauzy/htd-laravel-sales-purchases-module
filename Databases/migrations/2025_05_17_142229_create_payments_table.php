@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2)->default(0);
             $table->string('record_type')->default('IN');
             $table->string('record_status')->default('DRAFT');
-            $table->string('referencce')->nullable();
+            $table->string('reference')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('created_by')->nullable();

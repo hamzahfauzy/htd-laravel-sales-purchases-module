@@ -3,9 +3,12 @@
 namespace App\Modules\SalesPurchases\Resources;
 
 use App\Libraries\Abstract\Resource;
+use App\Libraries\Components\Button;
+use App\Libraries\Components\Delete;
 use App\Modules\SalesPurchases\Models\Invoice;
 use App\Modules\SalesPurchases\Models\Payment;
 use App\Modules\SalesPurchases\Models\PaymentMethod;
+use Illuminate\Http\Request;
 
 class PaymentResource extends Resource
 {
@@ -41,16 +44,25 @@ class PaymentResource extends Resource
                 'label' => 'Status',
                 '_searchable' => true
             ],
+            'created_at' => [
+                'label' => 'Date',
+                '_searchable' => false
+            ],
             '_action'
         ];
     }
 
     public static function form()
     {
-        $Invoices = Invoice::get();
+        $Invoices = Invoice::whereDoesntHave('payment')->get();
         $selectedInvoices = [];
         foreach ($Invoices as $invoice) {
             $selectedInvoices[$invoice->id] = $invoice->code;
+        }
+
+        if(static::$record)
+        {
+            $selectedInvoices[static::$record->invoice_id] = static::$record->invoice->code;
         }
 
         $PaymentMethod = PaymentMethod::get();
@@ -98,6 +110,24 @@ class PaymentResource extends Resource
         ];
     }
 
+    public static function beforeCreate(Request $request)
+    {
+        $invoice = Invoice::where('id', $request->invoice_id)->first();
+        if($invoice->record_type == 'PURCHASES')
+        {
+            $request->merge(['record_type' => 'OUT']);
+        }
+    }
+    
+    public static function beforeUpdate(Request $request, $data)
+    {
+        $invoice = Invoice::where('id', $request->invoice_id)->first();
+        if($invoice->record_type == 'PURCHASES')
+        {
+            $request->merge(['record_type' => 'OUT']);
+        }
+    }
+
     public static function detail()
     {
         return [
@@ -107,7 +137,76 @@ class PaymentResource extends Resource
                 'amount' => 'Amount',
                 'record_type' => 'Record Type',
                 'record_status' => 'Record Status',
+                'reference' => 'Reference',
             ],
         ];
+    }
+
+    public static function detailHeader()
+    {
+        $button = [
+            (new Button([
+                'url' => static::getPageRoute('index'),
+                'class' => 'btn btn-sm btn-outline-secondary',
+                'label' => 'Back',
+                'icon' => 'fas fa-fw fa-arrow-left'
+            ]))
+                ->routeName(static::getPageRouteName('index'))
+                ->render()
+        ];
+
+        if(static::$record->record_status == 'DRAFT')
+        {
+            $button[] = (new Button([
+                    'url' => static::getPageRoute('edit', ['id' => static::$record?->id]),
+                    'class' => 'btn btn-sm btn-warning',
+                    'label' => 'Edit',
+                    'icon' => 'fas fa-fw fa-pencil'
+                ]))
+                    ->routeName(static::getPageRouteName('edit'))
+                    ->render();
+        }
+
+        return [
+            'title' => 'Detail ' . static::$navigationLabel,
+            'button' => $button
+        ];
+    }
+
+    public static function getAction($d)
+    {
+        $buttons = [
+            'view' => (new Button([
+                'url' => static::getPageRoute('detail', ['id' => $d->id]),
+                'label' => 'Detail',
+                'class' => 'dropdown-item',
+                'icon' => 'fas fa-fw fa-eye'
+            ]))
+            ->routeName(static::getPageRouteName('detail'))
+            ->render(),
+            'edit' => (new Button([
+                'url' => static::getPageRoute('edit', ['id' => $d->id]),
+                'label' => 'Edit',
+                'class' => 'dropdown-item',
+                'icon' => 'fas fa-fw fa-pencil'
+            ]))
+            ->routeName(static::getPageRouteName('edit'))
+            ->render(),
+            'delete' => (new Delete([
+                'url' => static::getPageRoute('delete', ['id' => $d->id]),
+                'label' => 'Delete',
+                'class' => 'dropdown-item text-danger delete-record',
+                'icon' => 'fas fa-fw fa-trash'
+            ]))
+            ->routeName(static::getPageRouteName('delete'))
+            ->render()
+        ];
+
+        if($d->record_status != 'DRAFT')
+        {
+            unset($buttons['edit']);
+        }
+
+        return view('libraries.components.actions', compact('buttons'))->render();
     }
 }

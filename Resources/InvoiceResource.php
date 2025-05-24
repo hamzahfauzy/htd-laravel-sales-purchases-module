@@ -29,7 +29,30 @@ class InvoiceResource extends Resource
                 asset('modules/salespurchases/js/autoNumeric.min.js'),
                 asset('modules/salespurchases/js/invoice-item.js')
             ]);
+
+            if(request()->routeIs('*.edit'))
+            {
+                $id = request('id');
+                $invoice = static::$model::where('id', $id)->where('record_status','DRAFT')->first();
+                if(!$invoice)
+                {
+                    $url = route('sales-purchases.sales-purchases/invoices.detail', $id);
+                    header('location:'.$url);
+                    die;
+                }
+            }
         }
+    }
+
+    public static function getNavShortcut()
+    {
+        return [
+            [
+                'url' => url('/pos'),
+                'label' => 'Pos Panel',
+                'icon' => 'bx bxs-registered'
+            ]
+        ];
     }
 
     public static function table()
@@ -66,6 +89,10 @@ class InvoiceResource extends Resource
             'record_status' => [
                 'label' => 'Status',
                 '_searchable' => true
+            ],
+            'created_at' => [
+                'label' => 'Date',
+                '_searchable' => false
             ],
             '_action'
         ];
@@ -227,7 +254,7 @@ class InvoiceResource extends Resource
             ->render()
         ];
 
-        if($d->record_status == 'PUBLISH')
+        if($d->record_status != 'DRAFT')
         {
             unset($buttons['edit']);
         }

@@ -10,7 +10,7 @@ class IncomeReportResource extends Resource {
 
     protected static ?string $navigationGroup = 'Reports';
     protected static ?string $navigationLabel = 'Income Report';
-    protected static ?string $navigationIcon = 'bx bx-file';
+    protected static ?string $navigationIcon = 'bx bxs-file-export';
     protected static ?string $slug = 'reports/income';
     protected static ?string $routeGroup = 'reports';
     protected static $deleteRoute = false;
