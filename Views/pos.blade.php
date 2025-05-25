@@ -27,6 +27,10 @@
             .cart-item.selected td {
                 background-color:#c2c2fd;
             }
+            .product-list-header th {
+                background-color:rgba(var(--bs-danger-rgb), 1) !important;
+                color: #FFF;
+            }
             .select2 {
                 width: 100%;
             }
@@ -73,7 +77,7 @@
                     <div class="table-responsive">
                         <table class="table table-bordered item-table">
                             <thead>
-                                <tr>
+                                <tr class="product-list-header">
                                     <th class="text-center" width="25px">No</th>
                                     <th class="text-center">Nama Produk</th>
                                     <th class="text-center" width="70px">Satuan</th>
@@ -136,6 +140,8 @@
 [D] > Input Diskon            [-] > Kurang kuantiti
 [End] > Input Pembayaran      [Enter] > Bayar
 [V] > Void transaksi          [R] > Retur transaksi
+[P] > Buka Produk             [J] > Ubah Jumlah
+[S] > Ubah Satuan
 </pre>
                     </code>
                 </div>
@@ -152,7 +158,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="">Produk</label>
-                            <?php $items = \App\Modules\SalesPurchases\Models\Product::orderBy('name','asc')->get(); ?>
+                            <?php $items = \App\Modules\SalesPurchases\Models\Product::orderBy('name','asc')->whereHas('prices')->get(); ?>
                             <select name="modal_product_id" id="modal_product_id" class="form-control form-select select2">
                                 @foreach ($items as $item)
                                 <option value="{{$item->code}}">{{$item->completeName}}</option>
@@ -228,6 +234,10 @@
                     dropdownParent: $("#productModal")
                 });
                 
+                $('.select-unit').select2({
+                    theme: 'bootstrap-5',
+                });
+                
                 var selectedItems = []
                 var selectedRow = 1
                 var invoice_code = ''
@@ -257,13 +267,13 @@
                                                     <span class="item-name">${item.name}</span><br>
                                                     ${item.code} ${item.sku ? '-' + item.sku : ''}
                                                 </td>
-                                                <td width="70px">
-                                                    <select name="unit" style="width:70px" class="form-control form-lg" onchange="changeUnit('${item.code}', '${item.price}')">
+                                                <td width="130px">
+                                                    <select name="unit" style="width:130px" class="form-control form-lg select-unit" onchange="changeUnit('${item.code}', '${item.price}')">
                                                         ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
                                                         ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
                                                     </td>
                                                 <td width="70px">
-                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onchange="changeQty(this.value, '${item.code}')">
+                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onkeyup="changeQty(this.value, '${item.code}')">
                                                 </td>   
                                                 <td id="price-${item.code}" class="prices text-end" data-price="${item.price}" data-baseprice="${item.price}">
                                                     ${formatNumber(item.price)}
@@ -273,6 +283,9 @@
                                     `
 
                                     $('tbody').append(html)
+                                    $('#item-'+item.code).find('.select-unit').select2({
+                                        theme: 'bootstrap-5',
+                                    });
                                     // document.querySelector('tbody').innerHTML += html;
     
                                     changeUnit(item.code)
@@ -301,7 +314,7 @@
 
                     if(selectedItems.length == 0)
                     {
-                        document.querySelector('tbody').innerHTML = '<td colspan="5"><i>Tidak ada data</i></td>'
+                        document.querySelector('tbody').innerHTML = '<td colspan="5" class="text-center"><i>Tidak ada data</i></td>'
                     }
                 }
                 
@@ -438,7 +451,7 @@
                     .then(response => response.json())
                     .then(data => {
                         alert('Berhasil melakukan transaksi');
-                        window.location.reload();
+                        // window.location.reload();
                     })
                     .catch((error) => {
                         alert('Gagal melakukan transaksi');
@@ -468,7 +481,8 @@
                 })
 
                 document.addEventListener('keydown', function(e) {
-                    if(e.target.id == 'void_invoice_code' || e.target.id == 'return_invoice_code' || e.target.id == 'reference') return
+                    if(e.target.id == 'void_invoice_code' || e.target.id == 'return_invoice_code' || e.target.id == 'reference' || e.target.classList.contains('qty')) return
+                    if($('#productModal').hasClass('show') || $('#voidModal').hasClass('show') || $('#returnModal').hasClass('show')) return
                     const currentTime = Date.now();
 
                     // Reset buffer kalau jeda terlalu lama
@@ -510,6 +524,15 @@
                     } else if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey) {
                         // open return modal
                         $('#returnModal').modal('show')
+                    } else if (e.key == 'P' || e.key == 'p') {
+                        $('#productModal').modal('show')
+                        setTimeout(() => {
+                            $('#modal_product_id').select2('open')
+                        }, 1000);
+                    } else if (e.key == 'J' || e.key == 'j') {
+                        setAmountFocus()
+                    } else if (e.key == 'S' || e.key == 's') {
+                        openUnit()
                     }
                 });
 
@@ -547,6 +570,19 @@
                     if(row.querySelector('.qty').max && newVal > row.querySelector('.qty').max) return
                     row.querySelector('.qty').value = newVal
                     changeQty(row.querySelector('.qty').value, row.getAttribute('data-code'))
+                }
+
+                function setAmountFocus()
+                {
+                    const row = document.querySelectorAll('.cart-item')[selectedRow-1]
+                    const input = row.querySelector('.qty')
+                    input.focus()
+                }
+                
+                function openUnit()
+                {
+                    const row = document.querySelectorAll('.cart-item')[selectedRow-1]
+                    $(row).find('.select-unit').select2('open')
                 }
 
                 function doDelete(){

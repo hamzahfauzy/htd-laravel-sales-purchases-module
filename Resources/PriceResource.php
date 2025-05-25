@@ -29,7 +29,11 @@ class PriceResource extends Resource
         return [
             'product.completeName' => [
                 'label' => 'Product',
-                '_searchable' => true
+                '_searchable' => [
+                    'product.name',
+                    'product.code',
+                    'product.sku',
+                ]
             ],
             'unit' => [
                 'label' => 'Unit',
@@ -81,7 +85,7 @@ class PriceResource extends Resource
             'Basic Information' => [
                 'product_id' => [
                     'label' => 'Product',
-                    'type' => 'select',
+                    'type' => 'select2',
                     'options' => $itemOptions,
                     'placeholder' => 'Choose Product',
                     'required' => true,
