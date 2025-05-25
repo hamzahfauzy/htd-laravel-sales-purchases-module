@@ -3,7 +3,8 @@
 namespace App\Modules\SalesPurchases\Resources;
 
 use App\Libraries\Abstract\Resource;
-use App\Modules\SalesPurchases\Models\Customer;
+use App\Modules\Base\Models\Profile;
+use Illuminate\Http\Request;
 
 class CustomerResource extends Resource
 {
@@ -14,7 +15,12 @@ class CustomerResource extends Resource
     protected static ?string $slug = 'master/customers';
     protected static ?string $routeGroup = 'master';
 
-    protected static $model = Customer::class;
+    protected static $model = Profile::class;
+
+    public static function getModel()
+    {
+        return static::$model::where('record_type','CUSTOMER');
+    }
 
     public static function table()
     {
@@ -89,5 +95,10 @@ class CustomerResource extends Resource
                 'address' => 'Address',
             ],
         ];
+    }
+
+    public static function beforeCreate(Request $request)
+    {
+        $request->merge(['record_type' => 'CUSTOMER']);
     }
 }

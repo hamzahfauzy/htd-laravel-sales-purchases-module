@@ -31,8 +31,8 @@
                 background-color:rgba(var(--bs-danger-rgb), 1) !important;
                 color: #FFF;
             }
-            .select2 {
-                width: 100%;
+            .select2, .general-select2, .select-unit {
+                width: 100%!important;;
             }
             .payment_input:focus {
                 box-shadow: none !important;
@@ -46,18 +46,18 @@
                     <div class="d-flex align-items-center" style="gap:8px">
                         <img src="{{config('app.logo')}}" alt="" height="80px">
                     </div>
-                    <div class="d-flex justify-content-between position-relative d-none d-md-flex" role="search" style="max-width: 450px;width:100%;">
+                    <div class="justify-content-between position-relative d-none d-lg-flex" role="search" style="max-width: 450px;width:100%;">
                         <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
                     </div>
                     <div class="d-flex">
-                        <div class="text-end me-4">
-                            <h3 class="m-0 text-end d-block" id="clock-active">Loading clock...</h3>
+                        <div class="text-end me-4 d-none d-md-block">
+                            <h3 class="m-0 text-end d-block" id="clock-active">--:--:--</h3>
                             <span>{{date('l, d-m-Y')}}</span>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex flex-column justify-content-center text-end me-2">
+                            <div class="flex-column justify-content-center text-end me-2 d-none d-md-flex">
                                 <h6 class="m-0">{{auth()->user()->name}}</h6>
                                 <span style="font-size: 12px;">{!! auth()->user()->userRoleLabel !!}</span>
                             </div>
@@ -73,8 +73,9 @@
         </nav>
         <div class="container-fluid">
             <div class="row my-3">
-                <div class="col-12 d-block d-md-none mb-3">
+                <div class="col-12 d-flex d-lg-none mb-3">
                     <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
+                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
                 </div>
                 <div class="col-12 col-lg-8">
                     <div class="table-responsive">
@@ -96,24 +97,24 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <div class="text-center">
+
+                    {{-- <div class="text-center">
                         <img src="{{asset('assets/img/illustrations/placeholder.jpg')}}" alt="" height="250px">
-                    </div>
+                    </div> --}}
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item border-0 p-0 mb-2">
-                            <label for="">Diskon</label>
-                            <input type="tel" name="discount" onkeyup="reloadTable()" class="form-control text-end" placeholder="Masukkan diskon" value="0">
-                        </li>
-                        <li class="list-group-item border-0 p-0 mb-2">
-                            <label for="">Metode Pembayaran</label>
                             <select name="payment_method" class="form-control form-select general-select2 payment_method_select">
                                 @foreach ($paymentMethods as $key => $paymentMethod)
-                                    <option value="{{ $paymentMethod->id }}" {{$key == 0 ? 'selected' : ''}}>{{ $paymentMethod->name }}</option>
+                                    <option value="{{ $paymentMethod->id }}" {{$key == 0 ? 'selected' : ''}}>Metode Pembayaran : {{ $paymentMethod->name }}</option>
                                 @endforeach
                             </select>
                         </li>
                         <li class="list-group-item border-0 p-0 mb-2">
-                            <input type="tel" name="payment_amount" onkeyup="changePaymentAmount(this.value)" class="form-control text-end border-0 payment_input" placeholder="Jumlah Bayar" style="font-size: 32px">
+                            <label for="">Diskon</label>
+                            <input type="tel" name="discount" onkeyup="reloadTable()" class="form-control text-end autonumeric" placeholder="Masukkan diskon" value="0">
+                        </li>
+                        <li class="list-group-item border-0 p-0 mb-2">
+                            <input type="tel" name="payment_amount" onkeyup="changePaymentAmount(this.value)" class="form-control text-end border-0 payment_input autonumeric" placeholder="Jumlah Bayar" style="font-size: 32px">
                         </li>
                         <li class="list-group-item border-0 p-0 mb-2">
                             <input type="text" name="reference" class="form-control text-end" placeholder="Catatan" id="reference">
@@ -228,6 +229,7 @@
             <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
             <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
             <script src="{{asset('assets/js/select2.js')}}"></script>
+            <script src="{{asset('modules/salespurchases/js/autoNumeric.min.js')}}"></script>
 
             <script>
                 $('.select2').select2({
@@ -246,6 +248,17 @@
                 var selectedItems = []
                 var selectedRow = 1
                 var invoice_code = ''
+
+                function setAutoNumeric(el){
+                    el.forEach(elm => {
+                        new AutoNumeric(elm, {
+                            digitGroupSeparator: ',',
+                            decimalCharacter: '.',
+                            decimalPlaces: 0,
+                            unformatOnSubmit: true,
+                        })
+                    })
+                }
 
                 function findProduct(code) {
                     if(invoice_code) return
@@ -308,7 +321,7 @@
 
                 function reloadTable()
                 {
-                    var discount = document.querySelector('input[name="discount"]').value;
+                    var discount = document.querySelector('input[name="discount"]').value.replaceAll(',','');
                     var subtotals = document.querySelectorAll('.prices');
                     var total = 0;
                     subtotals.forEach((sbtotal) => {
@@ -324,7 +337,7 @@
                 }
                 
                 function changeQty(qty, code) {
-                    if(qty == 0)
+                    if(qty == 0 && qty != '')
                     {
                         document.querySelector(`#item-${code}`).remove()
                         const index = selectedItems.findIndex(itm => itm.code == code)
@@ -363,6 +376,7 @@
                 // }
 
                 function changePaymentAmount(payment) {
+                    payment = payment.replaceAll(',','')
                     var total = document.getElementById('total').getAttribute('data-price');
                     var change = payment - total;
                     document.getElementById('change').innerHTML = payment ? formatNumber(change) : 'Rp 0';
@@ -744,6 +758,8 @@
                     findProduct(code)
                     $('.btn-product-close').trigger('click')
                 }
+
+                setAutoNumeric(document.querySelectorAll('.autonumeric'))
             </script>
     </body>
 </html>

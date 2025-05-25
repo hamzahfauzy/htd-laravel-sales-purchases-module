@@ -5,6 +5,7 @@ namespace App\Modules\SalesPurchases\Models;
 use App\Modules\Base\Traits\HasActivity;
 use App\Modules\Base\Traits\HasCreator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Mike42\Escpos\Printer as PosPrinter;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
@@ -92,7 +93,7 @@ class Printer extends Model
 
             $printer->close();
         } catch (\Exception $e) {
-            \Log::error("Printer Error: " . $e->getMessage());
+            Log::error("Printer Error: " . $e->getMessage());
             echo $e->getMessage();
         }
     }

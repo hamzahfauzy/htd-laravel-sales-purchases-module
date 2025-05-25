@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sp_supplier_invoices', function (Blueprint $table) {
+        Schema::create('sp_profile_invoices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('supplier_id')->nullable();
-            $table->foreign('supplier_id')->references('id')->on('sp_suppliers')->onDelete('restrict');
+            $table->unsignedBigInteger('profile_id')->nullable();
+            $table->foreign('profile_id')->references('id')->on('base_profiles')->onDelete('restrict');
 
             $table->unsignedBigInteger('invoice_id')->nullable();
             $table->foreign('invoice_id')->references('id')->on('sp_invoices')->onDelete('restrict');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sp_supplier_invoices');
+        Schema::dropIfExists('sp_profile_invoices');
     }
 };

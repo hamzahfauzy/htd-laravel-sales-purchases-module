@@ -1,8 +1,8 @@
 <?php
 
 return [
-    // 'App\\Modules\\SalesPurchases\\Resources\\CustomerResource',
-    // 'App\\Modules\\SalesPurchases\\Resources\\SupplierResource',
+    'App\\Modules\\SalesPurchases\\Resources\\CustomerResource',
+    'App\\Modules\\SalesPurchases\\Resources\\SupplierResource',
     'App\\Modules\\SalesPurchases\\Resources\\PaymentMethodResource',
     'App\\Modules\\SalesPurchases\\Resources\\PrinterResource',
 

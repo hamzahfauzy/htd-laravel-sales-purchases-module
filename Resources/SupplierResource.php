@@ -3,7 +3,8 @@
 namespace App\Modules\SalesPurchases\Resources;
 
 use App\Libraries\Abstract\Resource;
-use App\Modules\SalesPurchases\Models\Supplier;
+use App\Modules\Base\Models\Profile;
+use Illuminate\Http\Request;
 
 class SupplierResource extends Resource
 {
@@ -14,7 +15,12 @@ class SupplierResource extends Resource
     protected static ?string $slug = 'master/suppliers';
     protected static ?string $routeGroup = 'master';
 
-    protected static $model = Supplier::class;
+    protected static $model = Profile::class;
+
+    public static function getModel()
+    {
+        return static::$model::where('record_type','SUPPLIER');
+    }
 
     public static function table()
     {
@@ -89,5 +95,10 @@ class SupplierResource extends Resource
                 'address' => 'Address',
             ],
         ];
+    }
+
+    public static function beforeCreate(Request $request)
+    {
+        $request->merge(['record_type' => 'SUPPLIER']);
     }
 }
