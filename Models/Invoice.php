@@ -2,6 +2,7 @@
 
 namespace App\Modules\SalesPurchases\Models;
 
+use App\Modules\Base\Models\Profile;
 use App\Modules\Base\Traits\HasActivity;
 use App\Modules\Base\Traits\HasCreator;
 use DateTimeInterface;
@@ -46,6 +47,11 @@ class Invoice extends Model
     function payment()
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
+    }
+
+    function profile()
+    {
+        return $this->belongsToMany(Profile::class, 'sp_profile_invoices', 'profile_id', 'invoice_id');
     }
 
 }

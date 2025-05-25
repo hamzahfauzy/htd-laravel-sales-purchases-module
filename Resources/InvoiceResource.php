@@ -5,6 +5,7 @@ namespace App\Modules\SalesPurchases\Resources;
 use App\Libraries\Abstract\Resource;
 use App\Libraries\Components\Button;
 use App\Libraries\Components\Delete;
+use App\Modules\Base\Models\Profile;
 use App\Modules\Inventory\Models\Item;
 use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
@@ -90,6 +91,10 @@ class InvoiceResource extends Resource
                 'label' => 'Status',
                 '_searchable' => true
             ],
+            'profile.0.name' => [
+                'label' => 'Customer/Supplier',
+                '_searchable' => false
+            ],
             'created_at' => [
                 'label' => 'Date',
                 '_searchable' => false
@@ -112,6 +117,12 @@ class InvoiceResource extends Resource
             static::$record->invoice_discount = 0;
             static::$record->items = [];
         }
+        else
+        {
+            static::$record->profile_id = static::$record->profile && isset(static::$record->profile[0]) ? static::$record->profile[0]->id : '';
+        }
+
+        $profiles = Profile::whereIn('record_type', ['SUPPLIER','CUSTOMER'])->pluck('name', 'id');
         
         return [
             'Basic Information' => [
@@ -147,6 +158,12 @@ class InvoiceResource extends Resource
                     'type' => 'text',
                     'placeholder' => 'Final Price',
                     'readonly' => 'readonly'
+                ],
+                'profile_id' => [
+                    'label' => 'Customer/Supplier',
+                    'type' => 'select2',
+                    'options' => $profiles,
+                    'placeholder' => 'Choose Data',
                 ],
                 'record_type' => [
                     'label' => 'Record Type',
@@ -185,6 +202,7 @@ class InvoiceResource extends Resource
                 'item_discount' => 'Item Discount',
                 'total_discount' => 'Total Discount',
                 'final_price' => 'Final Price',
+                'profile.0.name' => 'Customer/Supplier',
                 'record_type' => 'Record Type',
                 'record_status' => 'Record Status',
             ],
@@ -291,11 +309,14 @@ class InvoiceResource extends Resource
             }
 
         }
+
+        $data->profile()->sync([$request->profile_id]);
     }
     
     public static function afterUpdate(Request $request, $data)
     {
         $data->items()->delete();
+        $data->profile()->sync([$request->profile_id]);
 
         foreach($request->items as $item)
         {
