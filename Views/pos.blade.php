@@ -34,6 +34,9 @@
             .select2 {
                 width: 100%;
             }
+            .payment_input:focus {
+                box-shadow: none !important;
+            }
         </style>
     </head>
     <body>
@@ -97,28 +100,26 @@
                         <img src="{{asset('assets/img/illustrations/placeholder.jpg')}}" alt="" height="250px">
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item px-0">
+                        <li class="list-group-item border-0 p-0 mb-2">
                             <label for="">Diskon</label>
-                            <input type="number" name="discount" onkeyup="reloadTable()" class="form-control text-end" placeholder="Masukkan diskon" value="0">
+                            <input type="tel" name="discount" onkeyup="reloadTable()" class="form-control text-end" placeholder="Masukkan diskon" value="0">
                         </li>
-                        <li class="list-group-item px-0">
+                        <li class="list-group-item border-0 p-0 mb-2">
                             <label for="">Metode Pembayaran</label>
-                            <select name="payment_method" class="form-control form-select">
-
-                                @foreach ($paymentMethods as $paymentMethod)
-                                    <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
-                                    
+                            <select name="payment_method" class="form-control form-select general-select2 payment_method_select">
+                                @foreach ($paymentMethods as $key => $paymentMethod)
+                                    <option value="{{ $paymentMethod->id }}" {{$key == 0 ? 'selected' : ''}}>{{ $paymentMethod->name }}</option>
                                 @endforeach
                             </select>
                         </li>
-                        <li class="list-group-item px-0">
-                            <input type="number" name="payment_amount" onkeyup="changePaymentAmount(this.value)" class="form-control text-end" placeholder="Masukkan Jumlah Bayar">
+                        <li class="list-group-item border-0 p-0 mb-2">
+                            <input type="tel" name="payment_amount" onkeyup="changePaymentAmount(this.value)" class="form-control text-end border-0 payment_input" placeholder="Jumlah Bayar" style="font-size: 32px">
                         </li>
-                        <li class="list-group-item px-0">
+                        <li class="list-group-item border-0 p-0 mb-2">
                             <input type="text" name="reference" class="form-control text-end" placeholder="Catatan" id="reference">
                         </li>
                         <li
-                            class="list-group-item px-0">
+                            class="list-group-item border-0 p-0 mb-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h2>Total</h2>
                                 <h2 class="text-danger" id="total">Rp 0</h2>
@@ -129,7 +130,7 @@
                             </div>
                         </li>
 
-                        <li class="list-group-item px-0">
+                        <li class="list-group-item border-0 p-0 mb-2">
                             <button class="btn btn-lg btn-danger w-100" onclick="bayar()">Bayar</button>
                         </li>
 
@@ -141,7 +142,7 @@
 [End] > Input Pembayaran      [Enter] > Bayar
 [V] > Void transaksi          [R] > Retur transaksi
 [P] > Buka Produk             [J] > Ubah Jumlah
-[S] > Ubah Satuan
+[S] > Ubah Satuan             [M] > Ubah Metode Pembayaran
 </pre>
                     </code>
                 </div>
@@ -232,6 +233,10 @@
                 $('.select2').select2({
                     theme: 'bootstrap-5',
                     dropdownParent: $("#productModal")
+                });
+
+                $('.general-select2').select2({
+                    theme: 'bootstrap-5',
                 });
                 
                 $('.select-unit').select2({
@@ -451,7 +456,7 @@
                     .then(response => response.json())
                     .then(data => {
                         alert('Berhasil melakukan transaksi');
-                        // window.location.reload();
+                        window.location.reload();
                     })
                     .catch((error) => {
                         alert('Gagal melakukan transaksi');
@@ -533,6 +538,8 @@
                         setAmountFocus()
                     } else if (e.key == 'S' || e.key == 's') {
                         openUnit()
+                    } else if (e.key == 'M' || e.key == 'm') {
+                        $('.payment_method_select').select2('open')
                     }
                 });
 
