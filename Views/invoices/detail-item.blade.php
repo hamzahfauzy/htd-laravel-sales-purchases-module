@@ -15,10 +15,10 @@
             <tr>
                 <td>{{$key+1}}</td>
                 <td>{{$item->product->name}}</td>
-                <td>{{$item->qty}} {{$item->unit}}</td>
-                <td>{{$item->total_price}}</td>
-                <td>{{$item->total_discount}}</td>
-                <td>{{$item->final_price}}</td>
+                <td>{{number_format($item->qty)}} {{$item->unit}}</td>
+                <td>{{number_format($item->total_price)}}</td>
+                <td>{{number_format($item->total_discount)}}</td>
+                <td>{{number_format($item->final_price)}}</td>
             </tr>
             @endforeach
         </tbody>

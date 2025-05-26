@@ -310,14 +310,19 @@ class InvoiceResource extends Resource
 
         }
 
-        $data->profile()->sync([$request->profile_id]);
+        if($request->profile_id)
+        {
+            $data->profile()->sync([$request->profile_id]);
+        }
     }
     
     public static function afterUpdate(Request $request, $data)
     {
         $data->items()->delete();
-        $data->profile()->sync([$request->profile_id]);
-
+        if($request->profile_id)
+        {
+            $data->profile()->sync([$request->profile_id]);
+        }
         foreach($request->items as $item)
         {
             $data->items()->create($item);

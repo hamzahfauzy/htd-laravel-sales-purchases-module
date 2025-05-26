@@ -37,6 +37,12 @@
             .payment_input:focus {
                 box-shadow: none !important;
             }
+            .label-discount {
+                margin-bottom: -30px;
+                display: block;
+                margin-top: 10px;
+                padding-left: 10px;
+            }
         </style>
     </head>
     <body>
@@ -48,7 +54,7 @@
                     </div>
                     <div class="justify-content-between position-relative d-none d-lg-flex" role="search" style="max-width: 450px;width:100%;">
                         <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
-                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
+                        <button class="btn btn-sm btn-info ms-2" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
                     </div>
                     <div class="d-flex">
                         <div class="text-end me-4 d-none d-md-block">
@@ -75,7 +81,7 @@
             <div class="row my-3">
                 <div class="col-12 d-flex d-lg-none mb-3">
                     <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
-                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
+                    <button class="btn btn-sm btn-info ms-2" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-folder-open"></i></button>
                 </div>
                 <div class="col-12 col-lg-8">
                     <div class="table-responsive">
@@ -97,11 +103,13 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-
-                    {{-- <div class="text-center">
-                        <img src="{{asset('assets/img/illustrations/placeholder.jpg')}}" alt="" height="250px">
-                    </div> --}}
                     <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 p-0 mb-2">
+                            <label for="" style="position: absolute;z-index: 3;right: 14px;top: 5px;"><i class="fa-solid fa-user"></i></label>
+                            <select name="customer" class="form-control form-select customer-select">
+                                <option value="">Walkin Guest</option>
+                            </select>
+                        </li>
                         <li class="list-group-item border-0 p-0 mb-2">
                             <select name="payment_method" class="form-control form-select general-select2 payment_method_select">
                                 @foreach ($paymentMethods as $key => $paymentMethod)
@@ -110,7 +118,7 @@
                             </select>
                         </li>
                         <li class="list-group-item border-0 p-0 mb-2">
-                            <label for="">Diskon</label>
+                            <label for="" class="label-discount">Diskon</label>
                             <input type="tel" name="discount" onkeyup="reloadTable()" class="form-control text-end autonumeric" placeholder="Masukkan diskon" value="0">
                         </li>
                         <li class="list-group-item border-0 p-0 mb-2">
@@ -144,6 +152,7 @@
 [V] > Void transaksi          [R] > Retur transaksi
 [P] > Buka Produk             [J] > Ubah Jumlah
 [S] > Ubah Satuan             [M] > Ubah Metode Pembayaran
+[K] > Pilih Kustomer
 </pre>
                     </code>
                 </div>
@@ -244,6 +253,27 @@
                 $('.select-unit').select2({
                     theme: 'bootstrap-5',
                 });
+
+                const customerSelect = {
+                    theme: 'bootstrap-5',
+                    placeholder: 'Cari Kustomer',
+                    ajax: {
+                        url: '/sales-purchases/customers', // ganti dengan URL kamu
+                        dataType: 'json',
+                        delay: 250,
+                        processResults: function (data) {
+                        return {
+                            results: data.map(item => ({
+                                id: item.id,
+                                text: item.name,
+                            }))
+                        };
+                        },
+                        cache: true
+                    }
+                }
+
+                $('.customer-select').select2(customerSelect);
                 
                 var selectedItems = []
                 var selectedRow = 1
@@ -444,7 +474,8 @@
                         change:  parseInt(document.getElementById('change').getAttribute('data-value')),
                         items: items,
                         payment_reference: document.getElementById('reference').value,
-                        code: invoice_code
+                        code: invoice_code,
+                        customer_id: $('.customer-select').val()
                     }
 
                     if(data.payment_amount <= 0)
@@ -554,6 +585,8 @@
                         openUnit()
                     } else if (e.key == 'M' || e.key == 'm') {
                         $('.payment_method_select').select2('open')
+                    } else if (e.key == 'K' || e.key == 'k') {
+                        $('.customer-select').select2('open')
                     }
                 });
 

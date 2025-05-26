@@ -51,7 +51,7 @@ class Invoice extends Model
 
     function profile()
     {
-        return $this->belongsToMany(Profile::class, 'sp_profile_invoices', 'profile_id', 'invoice_id');
+        return $this->belongsToMany(Profile::class, 'sp_profile_invoices', 'invoice_id', 'profile_id');
     }
 
 }

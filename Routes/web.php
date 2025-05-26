@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Base\Models\Profile;
 use App\Modules\Inventory\Models\Item;
 use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
@@ -14,6 +15,18 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
     Route::prefix('sales-purchases')->group(function(){
         Route::get('products', [\App\Modules\SalesPurchases\Controllers\ProductController::class,'get'])->name('products.get');
+        Route::get('customers', function(){
+            $term = request('term', '');
+            $items = Profile::where(function($query) use ($term){
+                                    $query->where('name','LIKE', "%$term%")
+                                    ->orWhere('code','LIKE', "%$term%");
+                                })
+                                ->where('record_type','CUSTOMER')
+                                ->limit(20)
+                                ->get();
+
+            return $items;
+        })->name('customers.get');
         Route::post('void-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'voidSales'])->name('sales.void');
         Route::post('return-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'returnSales'])->name('sales.return');
     });
@@ -165,6 +178,12 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                     "total_discount" => request()['discount'],
                     "record_status" => "PUBLISH",
                 ]);
+
+                if(request('customer_id'))
+                {
+                    $customer_id = request('customer_id');
+                    $invoice->profile()->sync([$customer_id]);
+                }
     
                 $invoice->items()->createMany(request()['items']);
     

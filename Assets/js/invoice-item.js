@@ -30,6 +30,7 @@ function calculateRow(row) {
     row.find('.subtotal').val(subtotal.toFixed(2));
     row.find('.subtotal-label').html(subtotal.toFixed(2));
     row.find('.final_price').val(finalPrice.toFixed(2));
+    row.find('.total_price').val(subtotal);
     row.find('.final_price-label').html(formatNumber(finalPrice.toFixed(2)));
 
     calculateTotal()
@@ -184,6 +185,7 @@ $('.btn-add-item').click(function () {
             <td><input type="text" name="items[${items}][base_price]" class="base_price form-control autonumeric" value=""></td>
             <td>
                 <input type="hidden" name="items[${items}][total_discount]" value="0" class="discount">
+                <input type="hidden" name="items[${items}][total_price]" class="total_price">
                 <input type="hidden" name="items[${items}][final_price]" class="final_price">
                 <span class="final_price-label final_price-${items} autonumeric"></span>
             </td>
