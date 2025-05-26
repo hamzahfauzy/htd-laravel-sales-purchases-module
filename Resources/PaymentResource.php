@@ -75,7 +75,7 @@ class PaymentResource extends Resource
             'Basic Information' => [
                 'invoice_id' => [
                     'label' => 'Invoice',
-                    'type' => 'select',
+                    'type' => 'select2',
                     'options' => $selectedInvoices,
                     'placeholder' => 'Choose Invoice',
                     'required' => true,
