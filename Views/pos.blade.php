@@ -469,7 +469,7 @@
                         total_qty: total_qty,
                         final_price: total_price-discount,
                         discount: discount,
-                        payment_amount: parseInt(document.querySelector('input[name="payment_amount"]').value),
+                        payment_amount: parseInt(document.querySelector('input[name="payment_amount"]').value.replaceAll(',','')),
                         payment_method: document.querySelector('select[name="payment_method"]').value,
                         change:  parseInt(document.getElementById('change').getAttribute('data-value')),
                         items: items,
