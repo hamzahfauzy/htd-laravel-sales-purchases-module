@@ -69,7 +69,8 @@ class PrinterResource extends Resource
                         'USB' => 'USB',
                         'NETWORK' => 'NETWORK', 
                         'BLUETOOTH' => 'BLUETOOTH',
-                        'RAWBT' => 'RAWBT'
+                        'RAWBT' => 'RAWBT',
+                        'NOSTRA-SOCKET' => 'NOSTRA SOCKET',
                     ],
                     'required' => true
                 ],

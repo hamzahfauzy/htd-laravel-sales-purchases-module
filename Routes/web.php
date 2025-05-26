@@ -152,6 +152,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                     'telepon' => env('STORE_PHONE', '0812-3456-7890'),
                 ],
                 'kasir' => auth()->user()->name,
+                'member' => $invoice->profile?$invoice->profile[0]->name:'Walkin Guest',
                 'code' => $invoice->code,
                 'tanggal' => date('Y-m-d H:i:s'),
                 'items' => request()['items'],
@@ -222,6 +223,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                         'telepon' => env('STORE_PHONE', '0812-3456-7890'),
                     ],
                     'kasir' => auth()->user()->name,
+                    'member' => $invoice->profile && isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
                     'code' => $invoice->code,
                     'tanggal' => date('Y-m-d H:i:s'),
                     'items' => request()['items'],
@@ -251,7 +253,9 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                 'alamat' => 'Jl. Mawar No. 123, Jakarta',
                 'telepon' => '0812-3456-7890',
             ],
+            'code' => 'INV-123456789-9876',
             'kasir' => 'Budi',
+            'member' => 'Walkin Guest',
             'tanggal' => date('Y-m-d H:i:s'),
             'items' => [
                 ['name' => 'Indomie Goreng', 'qty' => 2, 'base_price' => 3500, 'total_price' => 7000],
@@ -260,6 +264,10 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             ],
             'bayar' => 20000
         ];
+
+        // $printString = Printer::find(1)?->printString($transaksi);
+
+        // echo "<pre>$printString</pre>";
 
         Printer::find(1)->printStruk($transaksi);
     });
