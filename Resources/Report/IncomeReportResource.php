@@ -31,7 +31,7 @@ class IncomeReportResource extends Resource {
         $date_end = request('filter.date_end', date('Y-m-d')) . ' 23:59:59';
         $model = static::$model::select(
                             DB::raw('DATE_FORMAT(sp_payments.created_at, "%Y-%m-%d") date'),
-                            DB::raw('FORMAT(COALESCE(SUM(sp_payments.amount),0),0) amount_total'),
+                            DB::raw('FORMAT(COALESCE(SUM(sp_payments.amount-sp_payments.change),0),0) amount_total'),
                         )
                         ->groupBy(DB::raw('DATE_FORMAT(sp_payments.created_at, "%Y-%m-%d")'))
                         ->where('sp_payments.record_status','PUBLISH')
