@@ -648,6 +648,7 @@
                         row.remove()
                         selectedItems.splice(selectedRow-1, 1)
                         selectedRow = 1
+                        reloadTable()
                     }
                 }
 
