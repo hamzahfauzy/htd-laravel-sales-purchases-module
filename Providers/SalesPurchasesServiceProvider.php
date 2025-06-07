@@ -3,6 +3,7 @@
 namespace App\Modules\SalesPurchases\Providers;
 
 use App\Libraries\Dashboard;
+use App\Libraries\NavPanel;
 use Illuminate\Support\ServiceProvider;
 
 class SalesPurchasesServiceProvider extends ServiceProvider
@@ -15,5 +16,11 @@ class SalesPurchasesServiceProvider extends ServiceProvider
 
         Dashboard::add(\App\Modules\SalesPurchases\Services\DashboardService::revenue());
         Dashboard::add(\App\Modules\SalesPurchases\Services\DashboardService::topStatistic());
+
+        NavPanel::add([
+            'url' => url('/pos'),
+            'label' => 'Pos Panel',
+            'icon' => 'bx bxs-registered',
+        ]);
     }
 }
