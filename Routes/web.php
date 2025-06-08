@@ -28,6 +28,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             return $items;
         })->name('customers.get');
         Route::post('void-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'voidSales'])->name('sales.void');
+        Route::post('add-product', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'addProduct'])->name('sales.add-product');
         Route::post('return-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'returnSales'])->name('sales.return');
     });
 

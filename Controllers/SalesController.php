@@ -5,10 +5,40 @@ namespace App\Modules\SalesPurchases\Controllers;
 use App\Modules\Inventory\Models\Item;
 use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
+use App\Modules\SalesPurchases\Models\Price;
 use Illuminate\Http\Request;
 
 class SalesController
 {
+    function addProduct(Request $request)
+    {
+        $item = Item::create([
+            'code' => $request->code,
+            'name' => $request->name,
+            'unit' => $request->unit,
+            'low_stock_alert' => 20,
+        ]);
+
+        ItemLog::create([
+            'item_id' => $item->id,
+            'unit' => $request->unit,
+            'amount' => $request->stock,
+            'record_type' => 'IN',
+            'description' => 'Add via pos quick form'
+        ]);
+
+        Price::create([
+            'product_id' => $item->id,
+            'unit' => $request->unit,
+            'amount_1' => $request->price,
+            'min_qty_1' => 1
+        ]);
+
+        return [
+            'status' => 'success',
+            'message' => 'Add product success'
+        ];
+    }
     function voidSales(Request $request)
     {
         $invoice = Invoice::where('code', $request->code)->where('record_type','SALES')->where('record_status','PUBLISH')->first();

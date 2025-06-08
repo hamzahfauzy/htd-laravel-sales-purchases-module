@@ -207,6 +207,44 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addProductModalLabel">Tambah Produk</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group mb-2">
+                            <label for="">Kode</label>
+                            <input type="text" name="product_code" id="product_code" class="form-control" placeholder="Kode">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Nama</label>
+                            <input type="text" name="product_name" id="product_name" class="form-control" placeholder="Nama">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Stok</label>
+                            <input type="number" name="product_stock" id="product_stock" class="form-control" placeholder="Stok" value="1">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Harga</label>
+                            <input type="number" name="product_price" id="product_price" class="form-control" placeholder="Harga">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Satuan</label>
+                            <input type="text" name="product_unit" id="product_unit" class="form-control" placeholder="Satuan" value="PCS">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" type="button" onclick="saveAndAddProductToList()">Tambahkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -345,7 +383,11 @@
                                 // document.querySelector('input[name="code"]').focus();
                         })
                         .catch(err => {
-
+                            $('#addProductModal').modal('show')
+                            $('#product_code').val(code)
+                            setTimeout(function(){
+                                $('#product_name').focus()
+                            }, 500)
                         });
                 }      
 
@@ -532,7 +574,7 @@
 
                 document.addEventListener('keydown', function(e) {
                     if(e.target.id == 'void_invoice_code' || e.target.id == 'return_invoice_code' || e.target.id == 'reference' || e.target.classList.contains('qty')) return
-                    if($('#productModal').hasClass('show') || $('#voidModal').hasClass('show') || $('#returnModal').hasClass('show')) return
+                    if($('#productModal').hasClass('show') || $('#voidModal').hasClass('show') || $('#returnModal').hasClass('show') || $('#addProductModal').hasClass('show')) return
                     const currentTime = Date.now();
 
                     // Reset buffer kalau jeda terlalu lama
@@ -791,6 +833,42 @@
                     const code = $('#modal_product_id').val()
                     findProduct(code)
                     $('.btn-product-close').trigger('click')
+                }
+
+                function saveAndAddProductToList()
+                {
+                    var productData = {
+                        code: $('#product_code').val(),
+                        name: $('#product_name').val(),
+                        stock: $('#product_stock').val(),
+                        price: $('#product_price').val(),
+                        unit: $('#product_unit').val(),
+                    }
+                    fetch('/sales-purchases/add-product', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(productData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.status == 'success')
+                        {
+                            findProduct(productData.code)
+                            $('#product_code').val('')
+                            $('#product_name').val('')
+                            $('#product_stock').val(1)
+                            $('#product_price').val('')
+                            $('#product_unit').val('PCS')
+                            $('#addProductModal').modal('hide')
+                        }
+                    })
+                    .catch((error) => {
+                        alert('Gagal Disimpan');
+                    });
                 }
 
                 setAutoNumeric(document.querySelectorAll('.autonumeric'))
