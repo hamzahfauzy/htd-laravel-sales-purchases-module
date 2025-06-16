@@ -257,10 +257,17 @@ class Printer extends Model
             }
 
             return new PosPrinter($connector);
-            
+
         } catch (\Exception $e) {
             Log::error("Printer Error: " . $e->getMessage());
             echo $e->getMessage();
         }
+    }
+
+    public function testPulse($int = 0)
+    {
+        $printer = $this->escpos();
+        $printer->pulse($int);
+        $printer->close();
     }
 }
