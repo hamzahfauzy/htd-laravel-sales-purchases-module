@@ -359,8 +359,8 @@
                                                     <span class="item-name">${item.name}</span><br>
                                                     ${item.code} ${item.sku ? '-' + item.sku : ''}
                                                 </td>
-                                                <td width="130px">
-                                                    <select name="unit" style="width:130px" class="form-control form-lg select-unit" onchange="changeUnit('${item.code}', '${item.price}')">
+                                                <td width="130px" style="position:relative;">
+                                                    <select name="unit" class="form-control form-lg select-unit" onchange="changeUnit('${item.code}', '${item.price}')">
                                                         ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
                                                         ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
                                                     </td>
