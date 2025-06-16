@@ -160,6 +160,7 @@
 [P] > Buka Produk             [J] > Ubah Jumlah
 [S] > Ubah Satuan             [M] > Ubah Metode Pembayaran
 [K] > Pilih Kustomer          [T] > Ubah Mode Transaksi
+[A] > Tambah Produk
 </pre>
                     </code>
                 </div>
@@ -394,13 +395,18 @@
                                 // document.querySelector('input[name="code"]').focus();
                         })
                         .catch(err => {
-                            $('#addProductModal').modal('show')
-                            $('#product_code').val(code)
-                            setTimeout(function(){
-                                $('#product_name').focus()
-                            }, 500)
+                            addProduct(code)
                         });
                 }      
+
+                function addProduct(code = '')
+                {
+                    $('#addProductModal').modal('show')
+                    $('#product_code').val(code)
+                    setTimeout(function(){
+                        $('#product_name').focus()
+                    }, 500)
+                }
 
                 function reloadTable()
                 {
@@ -652,6 +658,8 @@
                         $('.customer-select').select2('open')
                     } else if (e.key == 'T' || e.key == 't') {
                         $('.record_type_select').select2('open')
+                    } else if (e.key == 'A' || e.key == 'a') {
+                        addProduct('')
                     }
                 });
 
