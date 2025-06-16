@@ -201,4 +201,66 @@ class Printer extends Model
             echo $e->getMessage();
         }
     }
+
+    public function doPrint($text)
+    {
+        try {
+            // Inisialisasi konektor sesuai tipe
+            switch ($this->type) {
+                case 'WINDOWS':
+                    $connector = new \Mike42\Escpos\PrintConnectors\WindowsPrintConnector($this->connection_string);
+                    break;
+                case 'NETWORK':
+                    $connector = new \Mike42\Escpos\PrintConnectors\NetworkPrintConnector($this->connection_string);
+                    break;
+                case 'USB':
+                    $connector = new \Mike42\Escpos\PrintConnectors\FilePrintConnector($this->connection_string);
+                    break;
+                default:
+                    throw new \Exception("Jenis koneksi printer tidak didukung.");
+            }
+
+            $printer = new PosPrinter($connector);
+            // Header toko
+            $printer->text($text);
+
+            $printer->feed(1);
+            if ($this->auto_cut == 'YES') {
+                $printer->cut();
+            }
+
+            $printer->pulse();
+
+            $printer->close();
+        } catch (\Exception $e) {
+            Log::error("Printer Error: " . $e->getMessage());
+            echo $e->getMessage();
+        }
+    }
+
+    public function escpos()
+    {
+        try {
+            // Inisialisasi konektor sesuai tipe
+            switch ($this->type) {
+                case 'WINDOWS':
+                    $connector = new \Mike42\Escpos\PrintConnectors\WindowsPrintConnector($this->connection_string);
+                    break;
+                case 'NETWORK':
+                    $connector = new \Mike42\Escpos\PrintConnectors\NetworkPrintConnector($this->connection_string);
+                    break;
+                case 'USB':
+                    $connector = new \Mike42\Escpos\PrintConnectors\FilePrintConnector($this->connection_string);
+                    break;
+                default:
+                    throw new \Exception("Jenis koneksi printer tidak didukung.");
+            }
+
+            return new PosPrinter($connector);
+            
+        } catch (\Exception $e) {
+            Log::error("Printer Error: " . $e->getMessage());
+            echo $e->getMessage();
+        }
+    }
 }
