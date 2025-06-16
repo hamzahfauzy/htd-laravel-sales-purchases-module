@@ -158,7 +158,7 @@
 [V] > Void transaksi          [R] > Retur transaksi
 [P] > Buka Produk             [J] > Ubah Jumlah
 [S] > Ubah Satuan             [M] > Ubah Metode Pembayaran
-[K] > Pilih Kustomer
+[K] > Pilih Kustomer          [T] > Ubah Mode Transaksi
 </pre>
                     </code>
                 </div>
@@ -636,6 +636,8 @@
                         $('.payment_method_select').select2('open')
                     } else if (e.key == 'K' || e.key == 'k') {
                         $('.customer-select').select2('open')
+                    } else if (e.key == 'T' || e.key == 't') {
+                        $('.record_type_select').select2('open')
                     }
                 });
 
