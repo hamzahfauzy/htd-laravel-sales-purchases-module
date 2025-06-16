@@ -89,7 +89,8 @@
                             <thead>
                                 <tr class="product-list-header">
                                     <th class="text-center" width="25px">No</th>
-                                    <th class="text-center">Nama Produk</th>
+                                    <th class="text-center">Produk</th>
+                                    <th class="text-center" width="200px">Harga</th>
                                     <th class="text-center" width="70px">Satuan</th>
                                     <th class="text-center" width="70px">Jumlah</th>
                                     <th width="200px" class="text-end">Subtotal</th>
@@ -97,7 +98,7 @@
                             </thead>
     
                             <tbody>
-                                <tr><td colspan="5" class="text-center"><i>Tidak ada data</i></td></tr>
+                                <tr><td colspan="6" class="text-center"><i>Tidak ada data</i></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -359,11 +360,15 @@
                                                     <span class="item-name">${item.name}</span><br>
                                                     ${item.code} ${item.sku ? '-' + item.sku : ''}
                                                 </td>
+                                                <td>
+                                                    ${document.querySelector('.record_type_select').value == 'PURCHASES' ? '<input type="number" name="price_value" class="form-control price_value" onkeyup="changePrice(this)" onchange="changePrice(this)" data-code="'+item.code+'" value="'+item.price+'">' : formatNumber(item.price)}
+                                                </td>   
                                                 <td width="130px" style="position:relative;">
                                                     <select name="unit" class="form-control form-lg select-unit" onchange="changeUnit('${item.code}', '${item.price}')">
                                                         ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
                                                         ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
-                                                    </td>
+                                                    </select>
+                                                </td>
                                                 <td width="70px">
                                                     <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onkeyup="changeQty(this.value, '${item.code}')">
                                                 </td>   
@@ -410,7 +415,7 @@
 
                     if(selectedItems.length == 0)
                     {
-                        document.querySelector('tbody').innerHTML = '<td colspan="5" class="text-center"><i>Tidak ada data</i></td>'
+                        document.querySelector('tbody').innerHTML = '<td colspan="6" class="text-center"><i>Tidak ada data</i></td>'
                     }
                 }
                 
@@ -424,7 +429,7 @@
                         return
                     }
                     var selectUnit = document.querySelector(`#item-${code} select[name="unit"]`)
-                    var price = selectUnit ? selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price') : document.querySelector(`#price-${code}`).getAttribute('data-baseprice')
+                    var price = selectUnit && !document.querySelector('.price_value[data-code="'+code+'"]') ? selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price') : document.querySelector(`#price-${code}`).getAttribute('data-baseprice')
                     var subtotal = qty * price;
                     setSubTotal(code, subtotal, price);
                     reloadTable()
@@ -434,6 +439,15 @@
                     var qty = document.querySelector(`#item-${code} [name="qty"]`).value;
                     var selectUnit = document.querySelector(`#item-${code} [name="unit"]`)
                     var price = selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price')
+                    var subtotal = price * qty;
+                    setSubTotal(code, subtotal, price);
+                    reloadTable()
+                }
+                
+                function changePrice(el) {
+                    const code = el.dataset.code
+                    var qty = document.querySelector(`#item-${code} [name="qty"]`).value;
+                    var price = el.value
                     var subtotal = price * qty;
                     setSubTotal(code, subtotal, price);
                     reloadTable()
@@ -550,7 +564,7 @@
                     .then(response => response.json())
                     .then(data => {
                         alert('Berhasil melakukan transaksi');
-                        // window.location.reload();
+                        window.location.reload();
                     })
                     .catch((error) => {
                         alert('Gagal melakukan transaksi');
@@ -671,6 +685,7 @@
                 function updateQty(additional)
                 {
                     const row = document.querySelectorAll('.cart-item')[selectedRow-1]
+                    if(!row) return
                     const newVal = parseInt(row.querySelector('.qty').value) + parseInt(additional)
                     if(row.querySelector('.qty').max && newVal > row.querySelector('.qty').max) return
                     row.querySelector('.qty').value = newVal
