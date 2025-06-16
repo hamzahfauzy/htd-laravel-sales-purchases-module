@@ -36,6 +36,10 @@ class PaymentResource extends Resource
                 'label' => 'Amount',
                 '_searchable' => true
             ],
+            'change' => [
+                'label' => 'Change',
+                '_searchable' => true
+            ],
             'record_type' => [
                 'label' => 'Type',
                 '_searchable' => true
@@ -135,6 +139,7 @@ class PaymentResource extends Resource
                 'invoice.code' => 'Invoice',
                 'payment_method.name' => 'Payment Method',
                 'amount' => 'Amount',
+                'change' => 'Change',
                 'record_type' => 'Record Type',
                 'record_status' => 'Record Status',
                 'reference' => 'Reference',

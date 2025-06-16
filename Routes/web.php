@@ -179,6 +179,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                     "invoice_discount" => request()['discount'],
                     "total_discount" => request()['discount'],
                     "record_status" => "PUBLISH",
+                    "record_type" => request()['record_type'],
                 ]);
 
                 if(request('customer_id'))
@@ -200,7 +201,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                 foreach (request()['items'] as $item) {
                     $_item = Item::where('id', $item['product_id'])->with('conversions')->first();
                     $amount = $item['qty'];
-                    $description = 'Sales #' . $invoice->code;
+                    $description = $invoice->record_type .' #' . $invoice->code;
                     if($_item->unit != $item['unit'])
                     {
                         $conversion = $_item->conversions->where('unit', $item['unit'])->first();
@@ -212,24 +213,27 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                         'item_id' => $item['product_id'],
                         'amount' => $amount,
                         'unit' => $_item->unit,
-                        'record_type' => 'OUT',
+                        'record_type' => $invoice->record_type == 'SALES' ? 'OUT' : 'IN',
                         'description' => $description,
                     ]);
                 }
     
-                Printer::first()?->printStruk([
-                    'toko' => [
-                        'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
-                        'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
-                        'telepon' => env('STORE_PHONE', '0812-3456-7890'),
-                    ],
-                    'kasir' => auth()->user()->name,
-                    'member' => $invoice->profile && isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
-                    'code' => $invoice->code,
-                    'tanggal' => date('Y-m-d H:i:s'),
-                    'items' => request()['items'],
-                    'bayar' => request()['payment_amount'],
-                ]);
+                if($invoice->record_type == 'SALES')
+                {
+                    Printer::first()?->printStruk([
+                        'toko' => [
+                            'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
+                            'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
+                            'telepon' => env('STORE_PHONE', '0812-3456-7890'),
+                        ],
+                        'kasir' => auth()->user()->name,
+                        'member' => $invoice->profile && isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
+                        'code' => $invoice->code,
+                        'tanggal' => date('Y-m-d H:i:s'),
+                        'items' => request()['items'],
+                        'bayar' => request()['payment_amount'],
+                    ]);
+                }
     
                 return response()->json([
                     'status' => true,

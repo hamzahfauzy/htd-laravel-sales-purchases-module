@@ -20,6 +20,7 @@ class Payment extends Model
         // for later
         static::retrieved(function ($model) {
             $model->amount = number_format($model->amount);
+            $model->change = number_format($model->change);
         });
     }
 

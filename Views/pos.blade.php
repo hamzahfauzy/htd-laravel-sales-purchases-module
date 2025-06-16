@@ -50,7 +50,7 @@
             <div class="container-fluid">
                 <div class="d-flex justify-content-between w-100 align-items-center">
                     <div class="d-flex align-items-center" style="gap:8px">
-                        <img src="{{config('app.logo')}}" alt="" height="80px">
+                        <img src="{{asset('modules/salespurchases/img/default-logo-transparent.png')}}" alt="" height="80px">
                     </div>
                     <div class="justify-content-between position-relative d-none d-lg-flex" role="search" style="max-width: 450px;width:100%;">
                         <input class="form-control" name="code" type="search" placeholder="Masukkan kode produk" aria-label="Search" onchange="findProduct(this.value)" />
@@ -105,7 +105,7 @@
                 <div class="col-12 col-lg-4">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item border-0 p-0 mb-2">
-                            <label for="" style="position: absolute;z-index: 3;right: 14px;top: 5px;"><i class="fa-solid fa-user"></i></label>
+                            <label style="position: absolute;z-index: 3;right: 14px;top: 5px;"><i class="fa-solid fa-user"></i></label>
                             <select name="customer" class="form-control form-select customer-select">
                                 <option value="">Walkin Guest</option>
                             </select>
@@ -115,6 +115,12 @@
                                 @foreach ($paymentMethods as $key => $paymentMethod)
                                     <option value="{{ $paymentMethod->id }}" {{$key == 0 ? 'selected' : ''}}>Metode Pembayaran : {{ $paymentMethod->name }}</option>
                                 @endforeach
+                            </select>
+                        </li>
+                        <li class="list-group-item border-0 p-0 mb-2">
+                            <select name="record_type" class="form-control form-select general-select2 record_type_select">
+                                <option value="SALES">Mode Transaksi : Penjualan</option>
+                                <option value="PURCHASES">Mode Transaksi : Pembelian</option>
                             </select>
                         </li>
                         <li class="list-group-item border-0 p-0 mb-2">
@@ -517,6 +523,7 @@
                         items: items,
                         payment_reference: document.getElementById('reference').value,
                         code: invoice_code,
+                        record_type: document.querySelector('select[name="record_type"]').value,
                         customer_id: $('.customer-select').val()
                     }
 
@@ -543,7 +550,7 @@
                     .then(response => response.json())
                     .then(data => {
                         alert('Berhasil melakukan transaksi');
-                        window.location.reload();
+                        // window.location.reload();
                     })
                     .catch((error) => {
                         alert('Gagal melakukan transaksi');
