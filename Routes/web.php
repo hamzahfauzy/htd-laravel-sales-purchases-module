@@ -41,7 +41,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray();
             foreach ($data as $i => $row) {
-                if ($i == 0) continue;
+                if ($i == 0 || empty($row[2])) continue;
                 $code = $row[0]; 
                 $name = $row[1];
                 $unit = $row[2];
