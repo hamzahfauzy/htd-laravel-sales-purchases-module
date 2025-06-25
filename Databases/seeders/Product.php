@@ -30,16 +30,6 @@ class Product extends Seeder
                 $conversion4 = $row[8];
                 $unit5 = $row[9];
                 $conversion5 = $row[10];
-                // $unit6 = $row[11];
-                // $conversion6 = $row[12];
-                // $unit7 = $row[13];
-                // $conversion7 = $row[14];
-                // $unit8 = $row[15];
-                // $conversion8 = $row[16];
-                // $unit9 = $row[17];
-                // $conversion9 = $row[18];
-                // $unit10 = $row[19];
-                // $conversion10 = $row[20];
                 $purchase_price = $row[21];
                 $amount1 = $row[23];
                 $qty1 = $row[24];
@@ -107,6 +97,8 @@ class Product extends Seeder
                     'amount_3' => $amount3,
                     'min_qty_3' => $qty3,
                 ]);
+
+                echo $code . " - ". $name ." import success\n";
             }
             
             echo "Successfully imported " . count($data)-1 . " items";
