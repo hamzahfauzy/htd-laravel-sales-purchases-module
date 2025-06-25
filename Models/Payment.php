@@ -19,8 +19,11 @@ class Payment extends Model
     {
         // for later
         static::retrieved(function ($model) {
-            $model->amount = number_format($model->amount);
-            $model->change = number_format($model->change);
+            if(request()->routeIs('sales-purchases.sales-purchases/payments.index') || request()->routeIs('sales-purchases.sales-purchases/payments.detail'))
+            {
+                $model->amount = number_format($model->amount);
+                $model->change = number_format($model->change);
+            }
         });
     }
 
