@@ -193,13 +193,28 @@ class Printer extends Model
                 $printer->cut();
             }
 
-            $printer->pulse(0, 100);
-            $printer->getPrintConnector()->write("\x1B\x70\x00\x3C\xFF");
+            // $printer->pulse();
 
             $printer->close();
         } catch (\Exception $e) {
             Log::error("Printer Error: " . $e->getMessage());
             echo $e->getMessage();
+        }
+
+        try {
+            $fp = fopen("/dev/usb/lp0", "w");
+
+            if (!$fp) {
+                echo "Gagal membuka printer\n";
+                exit;
+            }
+
+            // Kirim raw ESC p command
+            fwrite($fp, "\x1B\x70\x00\x3C\xFF");
+
+            fclose($fp);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 
@@ -230,13 +245,28 @@ class Printer extends Model
                 $printer->cut();
             }
 
-            $printer->pulse(0, 100);
-            $printer->getPrintConnector()->write("\x1B\x70\x00\x3C\xFF");
+            // $printer->pulse();
 
             $printer->close();
         } catch (\Exception $e) {
             Log::error("Printer Error: " . $e->getMessage());
             echo $e->getMessage();
+        }
+
+        try {
+            $fp = fopen("/dev/usb/lp0", "w");
+
+            if (!$fp) {
+                echo "Gagal membuka printer\n";
+                exit;
+            }
+
+            // Kirim raw ESC p command
+            fwrite($fp, "\x1B\x70\x00\x3C\xFF");
+
+            fclose($fp);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 
@@ -271,5 +301,21 @@ class Printer extends Model
         $printer = $this->escpos();
         $printer->pulse($int);
         $printer->close();
+
+        try {
+            $fp = fopen("/dev/usb/lp0", "w");
+
+            if (!$fp) {
+                echo "Gagal membuka printer\n";
+                exit;
+            }
+
+            // Kirim raw ESC p command
+            fwrite($fp, "\x1B\x70\x00\x3C\xFF");
+
+            fclose($fp);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }
