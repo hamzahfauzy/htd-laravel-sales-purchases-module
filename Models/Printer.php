@@ -202,17 +202,7 @@ class Printer extends Model
         }
 
         try {
-            $fp = fopen("/dev/usb/lp0", "w");
-
-            if (!$fp) {
-                echo "Gagal membuka printer\n";
-                exit;
-            }
-
-            // Kirim raw ESC p command
-            fwrite($fp, "\x1B\x70\x00\x3C\xFF");
-
-            fclose($fp);
+            shell_exec('echo -e "\x1B\x70\x00\x3C\xFF" > /dev/usb/lp0');
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -254,17 +244,7 @@ class Printer extends Model
         }
 
         try {
-            $fp = fopen("/dev/usb/lp0", "w");
-
-            if (!$fp) {
-                echo "Gagal membuka printer\n";
-                exit;
-            }
-
-            // Kirim raw ESC p command
-            fwrite($fp, "\x1B\x70\x00\x3C\xFF");
-
-            fclose($fp);
+            shell_exec('echo -e "\x1B\x70\x00\x3C\xFF" > /dev/usb/lp0');
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -303,17 +283,7 @@ class Printer extends Model
         $printer->close();
 
         try {
-            $fp = fopen("/dev/usb/lp0", "w");
-
-            if (!$fp) {
-                echo "Gagal membuka printer\n";
-                exit;
-            }
-
-            // Kirim raw ESC p command
-            fwrite($fp, "\x1B\x70\x00\x3C\xFF");
-
-            fclose($fp);
+            shell_exec('echo -e "\x1B\x70\x00\x3C\xFF" > /dev/usb/lp0');
         } catch (\Throwable $th) {
             //throw $th;
         }
