@@ -202,7 +202,15 @@ class Printer extends Model
         }
 
         try {
-            shell_exec('echo -e "\x1B\x70\x00\x3C\xFF" > /dev/usb/lp0');
+            // Inisialisasi konektor sesuai tipe
+            $connector = new \Mike42\Escpos\PrintConnectors\FilePrintConnector("/dev/usb/lp0");
+
+            $printer = new PosPrinter($connector);
+
+            $printer->text("test");
+            $printer->feed(1);
+            $printer->pulse();
+            $printer->close();
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -242,12 +250,6 @@ class Printer extends Model
             Log::error("Printer Error: " . $e->getMessage());
             echo $e->getMessage();
         }
-
-        try {
-            shell_exec('echo -e "\x1B\x70\x00\x3C\xFF" > /dev/usb/lp0');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
 
     public function escpos()
@@ -281,11 +283,5 @@ class Printer extends Model
         $printer = $this->escpos();
         $printer->pulse($int);
         $printer->close();
-
-        try {
-            shell_exec('echo -e "\x1B\x70\x00\x3C\xFF" > /dev/usb/lp0');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
 }
