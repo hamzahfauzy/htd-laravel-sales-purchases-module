@@ -20,11 +20,14 @@ class Invoice extends Model
     {
         // for later
         static::retrieved(function ($model) {
-            $model->total_price = number_format($model->total_price);
-            $model->final_price = number_format($model->final_price);
-            $model->invoice_discount = number_format($model->invoice_discount);
-            $model->total_discount = number_format($model->total_discount);
-            $model->total_qty = number_format($model->total_qty);
+            if(request()->routeIs('sales-purchases.sales-purchases/invoices.index') || request()->routeIs('sales-purchases.sales-purchases/invoices.detail'))
+            {
+                $model->total_price = number_format($model->total_price);
+                $model->final_price = number_format($model->final_price);
+                $model->invoice_discount = number_format($model->invoice_discount);
+                $model->total_discount = number_format($model->total_discount);
+                $model->total_qty = number_format($model->total_qty);
+            }
         });
     }
 
