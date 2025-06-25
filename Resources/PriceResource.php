@@ -44,11 +44,43 @@ class PriceResource extends Resource
                 '_searchable' => true
             ],
             'amount_1' => [
-                'label' => 'Price',
+                'label' => 'Price 1',
                 '_searchable' => true
             ],
             'min_qty_1' => [
-                'label' => 'Minium Qty',
+                'label' => 'Minium Qty 1',
+                '_searchable' => true
+            ],
+            'amount_2' => [
+                'label' => 'Price 2',
+                '_searchable' => true
+            ],
+            'min_qty_2' => [
+                'label' => 'Minium Qty 2',
+                '_searchable' => true
+            ],
+            'amount_3' => [
+                'label' => 'Price 3',
+                '_searchable' => true
+            ],
+            'min_qty_3' => [
+                'label' => 'Minium Qty 3',
+                '_searchable' => true
+            ],
+            'amount_4' => [
+                'label' => 'Price 4',
+                '_searchable' => true
+            ],
+            'min_qty_4' => [
+                'label' => 'Minium Qty 4',
+                '_searchable' => true
+            ],
+            'amount_5' => [
+                'label' => 'Price 5',
+                '_searchable' => true
+            ],
+            'min_qty_5' => [
+                'label' => 'Minium Qty 5',
                 '_searchable' => true
             ],
             'creator.name' => [
@@ -103,12 +135,52 @@ class PriceResource extends Resource
                     'placeholder' => 'Enter price',
                 ],
                 'amount_1' => [
-                    'label' => 'Price',
+                    'label' => 'Price 1',
                     'type' => 'tel',
                     'placeholder' => 'Enter price',
                 ],
                 'min_qty_1' => [
-                    'label' => 'Minimum Qty',
+                    'label' => 'Minimum Qty 1',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter minimum qty',
+                ],
+                'amount_2' => [
+                    'label' => 'Price 2',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter price',
+                ],
+                'min_qty_2' => [
+                    'label' => 'Minimum Qty 2',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter minimum qty',
+                ],
+                'amount_3' => [
+                    'label' => 'Price 3',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter price',
+                ],
+                'min_qty_3' => [
+                    'label' => 'Minimum Qty 3',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter minimum qty',
+                ],
+                'amount_4' => [
+                    'label' => 'Price 4',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter price',
+                ],
+                'min_qty_4' => [
+                    'label' => 'Minimum Qty 4',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter minimum qty',
+                ],
+                'amount_5' => [
+                    'label' => 'Price 5',
+                    'type' => 'tel',
+                    'placeholder' => 'Enter price',
+                ],
+                'min_qty_5' => [
+                    'label' => 'Minimum Qty 5',
                     'type' => 'tel',
                     'placeholder' => 'Enter minimum qty',
                 ],
@@ -123,8 +195,16 @@ class PriceResource extends Resource
                 'product.completeName' => 'Name',
                 'unit' => 'Unit',
                 'purchase_price' => 'Purchase Price',
-                'amount_1' => 'Price',
-                'min_qty_1' => 'Minimum Qty',
+                'amount_1' => 'Price 1',
+                'min_qty_1' => 'Minimum Qty 1',
+                'amount_2' => 'Price 2',
+                'min_qty_2' => 'Minimum Qty 2',
+                'amount_3' => 'Price 3',
+                'min_qty_3' => 'Minimum Qty 3',
+                'amount_4' => 'Price 4',
+                'min_qty_4' => 'Minimum Qty 4',
+                'amount_5' => 'Price 5',
+                'min_qty_5' => 'Minimum Qty 5',
             ],
         ];
     }

@@ -153,8 +153,7 @@
                     </ul>
                     <code>
 <pre>
-[Atas/Bawah] > Memilih item   [+] > Tambah kuantiti
-[D] > Input Diskon            [-] > Kurang kuantiti
+[Atas/Bawah] > Memilih item   [D] > Input Diskon            
 [End] > Input Pembayaran      [Enter] > Bayar
 [V] > Void transaksi          [R] > Retur transaksi
 [P] > Buka Produk             [J] > Ubah Jumlah
@@ -217,32 +216,75 @@
 
         <!-- Modal -->
         <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="addProductModalLabel">Tambah Produk</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group mb-2">
-                            <label for="">Kode</label>
-                            <input type="text" name="product_code" id="product_code" class="form-control" placeholder="Kode">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Nama</label>
-                            <input type="text" name="product_name" id="product_name" class="form-control" placeholder="Nama">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Stok</label>
-                            <input type="number" name="product_stock" id="product_stock" class="form-control" placeholder="Stok" value="1">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Harga</label>
-                            <input type="number" name="product_price" id="product_price" class="form-control" placeholder="Harga">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Satuan</label>
-                            <input type="text" name="product_unit" id="product_unit" class="form-control" placeholder="Satuan" value="PCS">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="">Kode</label>
+                                    <input type="text" name="product_code" id="product_code" class="form-control" placeholder="Kode">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Nama</label>
+                                    <input type="text" name="product_name" id="product_name" class="form-control" placeholder="Nama">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Satuan</label>
+                                    <input type="text" name="product_unit" id="product_unit" class="form-control" placeholder="Satuan" value="PCS">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Stok</label>
+                                    <input type="number" name="product_stock" id="product_stock" class="form-control" placeholder="Stok" value="1">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Harga Jual 1</label>
+                                    <input type="number" name="product_price_1" id="product_price_1" class="form-control" placeholder="Harga">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Minimal Jumlah 1</label>
+                                    <input type="number" name="product_qty_1" id="product_qty_1" class="form-control" placeholder="Jumlah" value="1">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Harga Jual 2</label>
+                                    <input type="number" name="product_price_2" id="product_price_2" class="form-control" placeholder="Harga">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Minimal Jumlah 2</label>
+                                    <input type="number" name="product_qty_2" id="product_qty_2" class="form-control" placeholder="Jumlah">
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="">Harga Jual 3</label>
+                                    <input type="number" name="product_price_3" id="product_price_3" class="form-control" placeholder="Harga">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Minimal Jumlah 3</label>
+                                    <input type="number" name="product_qty_3" id="product_qty_3" class="form-control" placeholder="Jumlah">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Harga Jual 4</label>
+                                    <input type="number" name="product_price_4" id="product_price_4" class="form-control" placeholder="Harga">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Minimal Jumlah 4</label>
+                                    <input type="number" name="product_qty_4" id="product_qty_4" class="form-control" placeholder="Jumlah">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Harga Jual 5</label>
+                                    <input type="number" name="product_price_5" id="product_price_5" class="form-control" placeholder="Harga">
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="">Minimal Jumlah 5</label>
+                                    <input type="number" name="product_qty_5" id="product_qty_5" class="form-control" placeholder="Jumlah">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -356,28 +398,27 @@
                             } else {
                                 var html = `
                                         <tr id="item-${item.code}" class="cart-item" data-code="${item.code}" onclick="setActive(this)" style="cursor:pointer;">
-                                                <td width="25px">${items.length+1} <input type="hidden" name="id" value="${item.id}"></td>
-                                                <td>
-                                                    <span class="item-name">${item.name}</span><br>
-                                                    ${item.code} ${item.sku ? '-' + item.sku : ''}
-                                                </td>
-                                                <td>
-                                                    ${document.querySelector('.record_type_select').value == 'PURCHASES' ? '<input type="number" name="price_value" class="form-control price_value" onkeyup="changePrice(this)" onchange="changePrice(this)" data-code="'+item.code+'" value="'+item.price+'">' : formatNumber(item.price)}
-                                                </td>   
-                                                <td width="130px" style="position:relative;">
-                                                    <select name="unit" class="form-control form-lg select-unit" onchange="changeUnit('${item.code}', '${item.price}')">
-                                                        ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
-                                                        ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
-                                                    </select>
-                                                </td>
-                                                <td width="70px">
-                                                    <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onkeyup="changeQty(this.value, '${item.code}')">
-                                                </td>   
-                                                <td id="price-${item.code}" class="prices text-end" data-price="${item.price}" data-baseprice="${item.price}">
-                                                    ${formatNumber(item.price)}
-                                                </td>
-    
-                                            </tr>
+                                            <td width="25px">${items.length+1} <input type="hidden" name="id" value="${item.id}"></td>
+                                            <td>
+                                                <span class="item-name">${item.name}</span>
+                                            </td>
+                                            <td>
+                                                <span class="base_price base_price_${item.code}">${formatNumber(item.price)}</span>
+                                            </td>   
+                                            <td width="130px" style="position:relative;">
+                                                <select name="unit" class="form-control form-lg select-unit" onchange="changeUnit('${item.code}', '${item.price}')">
+                                                    ${item.units.length == 0 ? '<option value="">Tidak ada unit</option>' : ''}
+                                                    ${item.units.map(unit => `<option value="${unit.unit}" data-price="${unit.amount_1}" ${unit.unit == item.unit ? 'selected' : ''}>${unit.unit}</option>`)}
+                                                </select>
+                                            </td>
+                                            <td width="70px">
+                                                <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onkeyup="changeQty(this.value, '${item.code}')">
+                                            </td>
+                                            <td>
+                                                ${document.querySelector('.record_type_select').value == 'PURCHASES' ? `<input type="number" name="subtotal_value" class="form-control prices" id="price-${item.code}" data-code="${item.code}" value="${item.price}" data-baseprice="${item.price}" onchange="changePrice(this)" onkeyup="changePrice(this)">` : `<span id="price-${item.code}" class="prices text-end" data-price="${item.price}" data-baseprice="${item.price}">${formatNumber(item.price)}</span>`}
+                                            </td>
+
+                                        </tr>
                                     `
 
                                     $('tbody').append(html)
@@ -395,6 +436,7 @@
                                 // document.querySelector('input[name="code"]').focus();
                         })
                         .catch(err => {
+                            console.log(err)
                             addProduct(code)
                         });
                 }      
@@ -413,8 +455,9 @@
                     var discount = document.querySelector('input[name="discount"]').value.replaceAll(',','');
                     var subtotals = document.querySelectorAll('.prices');
                     var total = 0;
+                    const recordType = document.querySelector('.record_type_select').value
                     subtotals.forEach((sbtotal) => {
-                        var price = sbtotal.getAttribute('data-price');
+                        var price = recordType == 'PURCHASES' ? sbtotal.value : sbtotal.getAttribute('data-price');
                         total += parseInt(price)
                     });
                     setTotal(total-discount);
@@ -426,6 +469,7 @@
                 }
                 
                 function changeQty(qty, code) {
+                    qty = parseFloat(qty)
                     if(qty == 0 && qty != '')
                     {
                         document.querySelector(`#item-${code}`).remove()
@@ -434,11 +478,30 @@
                         reloadTable()
                         return
                     }
-                    var selectUnit = document.querySelector(`#item-${code} select[name="unit"]`)
-                    var price = selectUnit && !document.querySelector('.price_value[data-code="'+code+'"]') ? selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price') : document.querySelector(`#price-${code}`).getAttribute('data-baseprice')
-                    var subtotal = qty * price;
-                    setSubTotal(code, subtotal, price);
-                    reloadTable()
+
+                    if(document.querySelector('.record_type_select').value == 'SALES'){
+                        var item = selectedItems[selectedRow-1]
+                        var selectUnit = document.querySelector(`#item-${code} select[name="unit"]`)
+                        var selectedUnit = item.units.find(u => u.unit == selectUnit.value)
+                        var price = selectUnit && !document.querySelector('.price_value[data-code="'+code+'"]') ? selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price') : document.querySelector(`#price-${code}`).getAttribute('data-baseprice')
+                        if(selectedUnit.min_qty_5 && qty >= selectedUnit.min_qty_5){
+                            price = selectedUnit.amount_5
+                        } else if(selectedUnit.min_qty_4 && qty >= selectedUnit.min_qty_4){
+                            price = selectedUnit.amount_4
+                        } else if(selectedUnit.min_qty_3 && qty >= selectedUnit.min_qty_3){
+                            price = selectedUnit.amount_3
+                        } else if(selectedUnit.min_qty_2 && qty >= selectedUnit.min_qty_2){
+                            price = selectedUnit.amount_2
+                        }
+                        var subtotal = qty * price;
+                        setSubTotal(code, subtotal, price);
+                        reloadTable()
+                    } else {
+                        var subtotal = document.querySelector(`#price-${code}`).value
+                        var price = subtotal / qty;
+                        document.querySelector(`.base_price_${code}`).innerHTML = formatNumber(price);
+                        document.querySelector(`#price-${code}`).setAttribute('data-baseprice', price);
+                    }
                 }
 
                 function changeUnit(code) {
@@ -453,9 +516,10 @@
                 function changePrice(el) {
                     const code = el.dataset.code
                     var qty = document.querySelector(`#item-${code} [name="qty"]`).value;
-                    var price = el.value
-                    var subtotal = price * qty;
-                    setSubTotal(code, subtotal, price);
+                    var subtotal = el.value
+                    var price = subtotal / qty;
+                    document.querySelector(`.base_price_${code}`).innerHTML = formatNumber(price);
+                    // setSubTotal(code, subtotal, price);
                     reloadTable()
                 }
 
@@ -488,14 +552,19 @@
                 }
 
                 function setSubTotal(code, value, base_price) {
-                    document.getElementById(`price-${code}`).innerHTML = formatNumber(value);
-                    document.getElementById(`price-${code}`).setAttribute('data-price', value);
-                    document.getElementById(`price-${code}`).setAttribute('data-baseprice', base_price);
+                    if(document.querySelector('.record_type_select').value == 'SALES'){
+                        document.querySelector(`.base_price_${code}`).innerHTML = formatNumber(base_price);
+                        document.getElementById(`price-${code}`).innerHTML = formatNumber(value);
+                        document.getElementById(`price-${code}`).setAttribute('data-price', value);
+                        document.getElementById(`price-${code}`).setAttribute('data-baseprice', base_price);
+                    }
                 }
 
                 function bayar() {
 
                     var total_item = document.querySelectorAll('tbody tr');
+
+                    const recordType = document.querySelector('.record_type_select').value
 
                     var items = [];
 
@@ -518,7 +587,7 @@
                     var total_price = 0;
                     var subtotals = document.querySelectorAll('.prices');
                     subtotals.forEach((subtotal) => {
-                        var price = subtotal.getAttribute('data-price');
+                        var price = recordType == 'PURCHASES' ? subtotal.value : subtotal.getAttribute('data-price');
                         total_price += parseInt(price)
                     });
 
@@ -605,7 +674,7 @@
                     const currentTime = Date.now();
 
                     // Reset buffer kalau jeda terlalu lama
-                    if (currentTime - lastKeyTime > 300) {
+                    if (currentTime - lastKeyTime > 700) {
                         barcodeBuffer = '';
                     }
 
@@ -616,6 +685,12 @@
                         if (barcode.length > 0) {
                             console.log('Barcode scanned (global):', barcode);
                             findProduct(barcode);
+                        }
+                    } else if (e.key === '*') {
+                        const quantity = parseFloat(barcodeBuffer.trim());
+                        if(!isNaN(quantity)){
+                            setQty(quantity);
+                            barcodeBuffer = '';
                         }
                     } else {
                         barcodeBuffer += e.key;
@@ -629,10 +704,10 @@
                         updateSelection(selectedRow + 1);
                     } else if (e.key === 'Delete') {
                         doDelete()
-                    } else if (e.key === '+') {
-                        updateQty(1);
-                    } else if (e.key === '-') {
-                        updateQty(-1);
+                    // } else if (e.key === '+') {
+                    //     updateQty(1);
+                    // } else if (e.key === '-') {
+                    //     updateQty(-1);
                     } else if (e.key === 'End') {
                         document.querySelector('[name="payment_amount"]').focus()
                     } else if (e.key === 'd' || e.key === 'D') {
@@ -688,6 +763,15 @@
 
                     document.querySelectorAll('.cart-item').forEach(el => el.classList.remove('selected'))
                     document.querySelectorAll('.cart-item')[selectedRow-1].classList.add('selected')
+                }
+
+                function setQty(qty)
+                {
+                    const row = document.querySelectorAll('.cart-item')[selectedRow-1]
+                    if(!row) return
+                    if(row.querySelector('.qty').max && qty > row.querySelector('.qty').max) return
+                    row.querySelector('.qty').value = qty
+                    changeQty(row.querySelector('.qty').value, row.getAttribute('data-code'))
                 }
 
                 function updateQty(additional)
@@ -873,8 +957,17 @@
                         code: $('#product_code').val(),
                         name: $('#product_name').val(),
                         stock: $('#product_stock').val(),
-                        price: $('#product_price').val(),
                         unit: $('#product_unit').val(),
+                        price_1: $('#product_price_1').val(),
+                        qty_1: $('#product_qty_1').val(),
+                        price_2: $('#product_price_2').val(),
+                        qty_2: $('#product_qty_2').val(),
+                        price_3: $('#product_price_3').val(),
+                        qty_3: $('#product_qty_3').val(),
+                        price_4: $('#product_price_4').val(),
+                        qty_4: $('#product_qty_4').val(),
+                        price_5: $('#product_price_5').val(),
+                        qty_5: $('#product_qty_5').val(),
                     }
                     fetch('/sales-purchases/add-product', {
                         method: 'POST',
@@ -893,8 +986,17 @@
                             $('#product_code').val('')
                             $('#product_name').val('')
                             $('#product_stock').val(1)
-                            $('#product_price').val('')
                             $('#product_unit').val('PCS')
+                            $('#product_price_1').val('')
+                            $('#product_qty_1').val(1)
+                            $('#product_price_2').val('')
+                            $('#product_qty_2').val('')
+                            $('#product_price_3').val('')
+                            $('#product_qty_3').val('')
+                            $('#product_price_4').val('')
+                            $('#product_qty_4').val('')
+                            $('#product_price_5').val('')
+                            $('#product_qty_5').val('')
                             $('#addProductModal').modal('hide')
                         }
                     })

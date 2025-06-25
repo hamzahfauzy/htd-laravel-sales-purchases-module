@@ -30,8 +30,16 @@ class SalesController
         Price::create([
             'product_id' => $item->id,
             'unit' => $request->unit,
-            'amount_1' => $request->price,
-            'min_qty_1' => 1
+            'amount_1' => $request->price_1,
+            'min_qty_1' => $request->qty_1,
+            'amount_2' => $request->price_2,
+            'min_qty_2' => $request->qty_2,
+            'amount_3' => $request->price_3,
+            'min_qty_3' => $request->qty_3,
+            'amount_4' => $request->price_4,
+            'min_qty_4' => $request->qty_4,
+            'amount_5' => $request->price_5,
+            'min_qty_5' => $request->qty_5,
         ]);
 
         return [
