@@ -193,7 +193,7 @@ class Printer extends Model
                 $printer->cut();
             }
 
-            $printer->pulse();
+            $printer->pulse(0, 100);
 
             $printer->close();
         } catch (\Exception $e) {
@@ -229,7 +229,7 @@ class Printer extends Model
                 $printer->cut();
             }
 
-            $printer->pulse();
+            $printer->pulse(0, 100);
 
             $printer->close();
         } catch (\Exception $e) {
