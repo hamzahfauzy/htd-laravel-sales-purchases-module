@@ -176,11 +176,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="">Produk</label>
-                            <?php $items = \App\Modules\SalesPurchases\Models\Product::orderBy('name','asc')->whereHas('prices')->get(); ?>
                             <select name="modal_product_id" id="modal_product_id" class="form-control form-select select2">
-                                @foreach ($items as $item)
-                                <option value="{{$item->code}}">{{$item->completeName}}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -329,10 +325,27 @@
             <script src="{{asset('modules/salespurchases/js/autoNumeric.min.js')}}"></script>
 
             <script>
-                $('.select2').select2({
+                const select2Params = {
                     theme: 'bootstrap-5',
-                    dropdownParent: $("#productModal")
-                });
+                    placeholder: 'Find Product',
+                    dropdownParent: $("#productModal"),
+                    ajax: {
+                        url: '/sales-purchases/products', // ganti dengan URL kamu
+                        dataType: 'json',
+                        delay: 250,
+                        processResults: function (data) {
+                        return {
+                            results: data.map(item => ({
+                                id: item.code,
+                                text: item.completeName,
+                                prices: item.prices
+                            }))
+                        };
+                        },
+                        cache: true
+                    }
+                }
+                $('.select2').select2(select2Params);
 
                 $('.general-select2').select2({
                     theme: 'bootstrap-5',

@@ -44,7 +44,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                 if ($i == 0 || empty($row[2])) continue;
                 $code = $row[0]; 
                 $name = $row[1];
-                $unit = $row[2];
+                $unit = empty($row[2]) ? 'PCS' : $row[2];
                 $unit2 = $row[3];
                 $conversion2 = $row[4];
                 $unit3 = $row[5];
