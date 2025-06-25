@@ -194,6 +194,7 @@ class Printer extends Model
             }
 
             $printer->pulse(0, 100);
+            $printer->getPrintConnector()->write("\x1B\x70\x00\x3C\xFF");
 
             $printer->close();
         } catch (\Exception $e) {
@@ -230,6 +231,7 @@ class Printer extends Model
             }
 
             $printer->pulse(0, 100);
+            $printer->getPrintConnector()->write("\x1B\x70\x00\x3C\xFF");
 
             $printer->close();
         } catch (\Exception $e) {
