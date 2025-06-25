@@ -484,13 +484,13 @@
                         var selectUnit = document.querySelector(`#item-${code} select[name="unit"]`)
                         var selectedUnit = item.units.find(u => u.unit == selectUnit.value)
                         var price = selectUnit && !document.querySelector('.price_value[data-code="'+code+'"]') ? selectUnit.options[selectUnit.selectedIndex].getAttribute('data-price') : document.querySelector(`#price-${code}`).getAttribute('data-baseprice')
-                        if(selectedUnit.min_qty_5 && qty >= selectedUnit.min_qty_5){
+                        if(selectedUnit.min_qty_5 && selectedUnit.min_qty_5 > 0 && qty >= selectedUnit.min_qty_5){
                             price = selectedUnit.amount_5
-                        } else if(selectedUnit.min_qty_4 && qty >= selectedUnit.min_qty_4){
+                        } else if(selectedUnit.min_qty_4 && selectedUnit.min_qty_4 > 0 && qty >= selectedUnit.min_qty_4){
                             price = selectedUnit.amount_4
-                        } else if(selectedUnit.min_qty_3 && qty >= selectedUnit.min_qty_3){
+                        } else if(selectedUnit.min_qty_3 && selectedUnit.min_qty_3 > 0 && qty >= selectedUnit.min_qty_3){
                             price = selectedUnit.amount_3
-                        } else if(selectedUnit.min_qty_2 && qty >= selectedUnit.min_qty_2){
+                        } else if(selectedUnit.min_qty_2 && selectedUnit.min_qty_2 > 0 && qty >= selectedUnit.min_qty_2){
                             price = selectedUnit.amount_2
                         }
                         var subtotal = qty * price;
