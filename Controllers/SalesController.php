@@ -57,14 +57,15 @@ class SalesController
                 'message' => 'Transaction not found'
             ];
         }
+        
+        $invoice->payment()->update([
+            'record_status' => 'VOID'
+        ]);
 
         $invoice->update([
             'record_status' => 'VOID'
         ]);
         
-        $invoice->payment->update([
-            'record_status' => 'VOID'
-        ]);
 
         // cancel item log
         foreach($invoice->items as $item)
