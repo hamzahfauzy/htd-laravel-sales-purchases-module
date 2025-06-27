@@ -172,8 +172,8 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             'member' => $invoice->profile&&isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
             'code' => $invoice->code,
             'tanggal' => date('Y-m-d H:i:s'),
-            'items' => request()['items'],
-            'bayar' => request()['payment_amount'],
+            'items' => (array) $invoice->items,
+            'bayar' => $invoice->payment->amount,
         ]);
 
         return response()->json([
