@@ -161,7 +161,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
     });
 
     Route::post('pos/print-last-invoice', function (Request $request) {
-        $invoice = Invoice::with('invoices.product')->latest()->first();
+        $invoice = Invoice::with('items.product')->latest()->first();
 
         $items = [];
         foreach($invoice->items as $itm)
