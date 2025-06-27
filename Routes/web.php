@@ -161,7 +161,22 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
     });
 
     Route::post('pos/print-last-invoice', function (Request $request) {
-        $invoice = Invoice::latest()->first();
+        $invoice = Invoice::with('invoices.product')->latest()->first();
+
+        $items = [];
+        foreach($invoice->items as $itm)
+        {
+            $items[] = [
+                'product_id' => $itm->product_id,
+                'name' => $itm->product->name,
+                'qty' => $itm->qty,
+                'unit' => $itm->unit,
+                'base_price' => $itm->base_price,
+                'total_price' => $itm->total_price,
+                'final_price' => $itm->final_price
+            ];
+        }
+        
         Printer::first()?->printStruk([
             'toko' => [
                 'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
@@ -172,7 +187,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             'member' => $invoice->profile&&isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
             'code' => $invoice->code,
             'tanggal' => date('Y-m-d H:i:s'),
-            'items' => (array) $invoice->items,
+            'items' => $items,
             'bayar' => $invoice->payment()->latest()->first()->amount,
         ]);
 
