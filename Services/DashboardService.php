@@ -13,9 +13,9 @@ class DashboardService
 
         $summary = DB::table('sp_payments')
             ->selectRaw("
-                SUM(CASE WHEN DATE(created_at) = ? THEN amount ELSE 0 END) AS `Today Revenue`,
+                SUM(CASE WHEN DATE(created_at) = ? THEN amount-`change` ELSE 0 END) AS `Today Revenue`,
                 COUNT(CASE WHEN DATE(created_at) = ? THEN 1 ELSE NULL END) AS `Today Transaction`,
-                SUM(CASE WHEN created_at >= ? THEN amount ELSE 0 END) AS `Month Revenue`,
+                SUM(CASE WHEN created_at >= ? THEN amount-`change` ELSE 0 END) AS `Month Revenue`,
                 COUNT(CASE WHEN created_at >= ? THEN 1 ELSE NULL END) AS `Month Transaction`
             ", [
                 $today->toDateString(),
