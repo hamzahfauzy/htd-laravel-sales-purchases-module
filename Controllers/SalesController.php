@@ -6,6 +6,7 @@ use App\Modules\Inventory\Models\Item;
 use App\Modules\Inventory\Models\ItemLog;
 use App\Modules\SalesPurchases\Models\Invoice;
 use App\Modules\SalesPurchases\Models\Price;
+use App\Modules\SalesPurchases\Models\Product;
 use Illuminate\Http\Request;
 
 class SalesController
@@ -19,17 +20,10 @@ class SalesController
             'low_stock_alert' => 20,
         ]);
 
-        ItemLog::create([
-            'item_id' => $item->id,
-            'unit' => $request->unit,
-            'amount' => $request->stock,
-            'record_type' => 'IN',
-            'description' => 'Add via pos quick form'
-        ]);
-
         Price::create([
             'product_id' => $item->id,
             'unit' => $request->unit,
+            'purchase_price' => $request->purchase_price,
             'amount_1' => $request->price_1,
             'min_qty_1' => $request->qty_1,
             'amount_2' => $request->price_2,
@@ -38,9 +32,52 @@ class SalesController
             'min_qty_3' => $request->qty_3,
             'amount_4' => $request->price_4,
             'min_qty_4' => $request->qty_4,
-            'amount_5' => $request->price_5,
-            'min_qty_5' => $request->qty_5,
+            // 'amount_5' => $request->price_5,
+            // 'min_qty_5' => $request->qty_5,
         ]);
+
+        if($request->stok)
+        {
+            ItemLog::create([
+                'item_id' => $item->id,
+                'unit' => $request->unit,
+                'amount' => $request->stock,
+                'record_type' => 'IN',
+                'description' => 'Add via pos quick form'
+            ]);
+            
+            $invoice = Invoice::create([
+                "code" => 'INV-'.strtotime('now').'-'.rand(11111,99999),
+                "total_item" => 1,
+                "total_price" => $request->stock_price,
+                "total_qty" => $request->stock,
+                "final_price" => $request->stock_price,
+                "invoice_discount" => 0,
+                "total_discount" => 0,
+                "record_status" => "PUBLISH",
+                "record_type" => 'PURCHASE',
+            ]);
+    
+            $invoice->items()->createMany([
+                [
+                    'product_id' => $item->id,
+                    'name' => $item->name,
+                    'qty' => $request->stock,
+                    'unit' => $request->unit,
+                    'base_price' => $request->stock_price/$request->stock,
+                    'total_price' => $request->stock_price,
+                    'final_price' => $request->stock_price
+                ]
+            ]);
+    
+            $invoice->payment()->create([
+                'payment_method_id' => 1,
+                'amount' => $request->stock_price,
+                'change' => 0,
+                "record_status" => "PUBLISH",
+                'reference' => 'transaction from quick add form'
+            ]);
+        }
 
         return [
             'status' => 'success',
@@ -110,6 +147,92 @@ class SalesController
         return [
             'status' => 'success',
             'data' => $invoice
+        ];
+    }
+
+    function getProduct($code)
+    {
+        $product = Product::with('prices')->where('code', $code)->first();
+
+        return [
+            'status' => 'success',
+            'data' => $product
+        ];
+    }
+
+    function updateProduct(Request $request)
+    {
+        $product = Product::where('code', $request->code)->first();
+        $product->update([
+            'name' => $request->name,
+            'unit' => $request->unit,
+        ]);
+
+        Price::updateOrCreate([
+            'product_id' => $product->id,
+            'unit' => $request->unit,
+        ],[
+            'product_id' => $product->id,
+            'unit' => $request->unit,
+            'purchase_price' => $request->purchase_price,
+            'amount_1' => $request->price_1,
+            'min_qty_1' => $request->qty_1,
+            'amount_2' => $request->price_2,
+            'min_qty_2' => $request->qty_2,
+            'amount_3' => $request->price_3,
+            'min_qty_3' => $request->qty_3,
+            'amount_4' => $request->price_4,
+            'min_qty_4' => $request->qty_4,
+            // 'amount_5' => $request->price_5,
+            // 'min_qty_5' => $request->qty_5,
+        ]);
+
+        if($request->stok)
+        {
+            ItemLog::create([
+                'item_id' => $product->id,
+                'unit' => $request->unit,
+                'amount' => $request->stock,
+                'record_type' => 'IN',
+                'description' => 'Add via pos quick form'
+            ]);
+            
+            $invoice = Invoice::create([
+                "code" => 'INV-'.strtotime('now').'-'.rand(11111,99999),
+                "total_item" => 1,
+                "total_price" => $request->stock_price,
+                "total_qty" => $request->stock,
+                "final_price" => $request->stock_price,
+                "invoice_discount" => 0,
+                "total_discount" => 0,
+                "record_status" => "PUBLISH",
+                "record_type" => 'PURCHASE',
+            ]);
+    
+            $invoice->items()->createMany([
+                [
+                    'product_id' => $product->id,
+                    'name' => $product->name,
+                    'qty' => $request->stock,
+                    'unit' => $request->unit,
+                    'base_price' => $request->stock_price/$request->stock,
+                    'total_price' => $request->stock_price,
+                    'final_price' => $request->stock_price
+                ]
+            ]);
+    
+            $invoice->payment()->create([
+                'payment_method_id' => 1,
+                'amount' => $request->stock_price,
+                'change' => 0,
+                "record_status" => "PUBLISH",
+                'reference' => 'transaction from quick add form'
+            ]);
+        }
+
+        return [
+            'status' => 'success',
+            'data' => $product
         ];
     }
 }

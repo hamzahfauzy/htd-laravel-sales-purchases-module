@@ -16,6 +16,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
     Route::prefix('sales-purchases')->group(function(){
         Route::get('products', [\App\Modules\SalesPurchases\Controllers\ProductController::class,'get'])->name('products.get');
+        Route::get('products/datatable', [\App\Modules\SalesPurchases\Controllers\ProductController::class,'datatable'])->name('products.datatable');
         Route::get('customers', function(){
             $term = request('term', '');
             $items = Profile::where(function($query) use ($term){
@@ -30,6 +31,8 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         })->name('customers.get');
         Route::post('void-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'voidSales'])->name('sales.void');
         Route::post('add-product', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'addProduct'])->name('sales.add-product');
+        Route::post('update-product', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'updateProduct'])->name('sales.add-product');
+        Route::get('get-product/{code}', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'getProduct'])->name('sales.add-product');
         Route::post('return-sales', [\App\Modules\SalesPurchases\Controllers\SalesController::class,'returnSales'])->name('sales.return');
     });
 
@@ -157,6 +160,28 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         return view('sales-purchases::pos', compact('paymentMethods'));
     });
 
+    Route::post('pos/print-last-invoice', function (Request $request) {
+        $invoice = Invoice::latest()->first();
+        Printer::first()?->printStruk([
+            'toko' => [
+                'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
+                'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
+                'telepon' => env('STORE_PHONE', '0812-3456-7890'),
+            ],
+            'kasir' => auth()->user()->name,
+            'member' => $invoice->profile&&isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
+            'code' => $invoice->code,
+            'tanggal' => date('Y-m-d H:i:s'),
+            'items' => request()['items'],
+            'bayar' => request()['payment_amount'],
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Invoice Print',
+            'data' => $invoice
+        ]);
+    });
     Route::post('pos', function (Request $request) {
 
         if($request->code)
@@ -218,7 +243,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                     'telepon' => env('STORE_PHONE', '0812-3456-7890'),
                 ],
                 'kasir' => auth()->user()->name,
-                'member' => $invoice->profile?$invoice->profile[0]->name:'Walkin Guest',
+                'member' => $invoice->profile&&isset($invoice->profile[0])?$invoice->profile[0]->name:'Walkin Guest',
                 'code' => $invoice->code,
                 'tanggal' => date('Y-m-d H:i:s'),
                 'items' => request()['items'],
@@ -310,7 +335,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                     'status' => false,
                     'message' => 'Transaksi gagal',
                     'error' => $e->getMessage()
-                ]);
+                ], 400);
             }
         }
 

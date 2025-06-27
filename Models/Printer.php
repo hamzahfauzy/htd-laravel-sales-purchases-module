@@ -96,27 +96,32 @@ class Printer extends Model
 
         else if($this->type == 'NOSTRA-SOCKET')
         {
-            $printString = $this->printString($data);
-            file_put_contents('print.txt', $printString);
-            $connectionString = $this->connection_string;
-            $connectionString = explode(':', $connectionString);
-            
-            $host = $connectionString[0]; // Ganti dengan IP/host server socket
-            $port = $connectionString[1];                    // Ganti dengan port server socket
-            $uniqId = $connectionString[2];         // ID unik printer ini
-
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-            if (!$socket) {
-                die("Gagal membuat socket\n");
+            try {
+                //code...
+                $printString = $this->printString($data);
+                file_put_contents('print.txt', $printString);
+                $connectionString = $this->connection_string;
+                $connectionString = explode(':', $connectionString);
+                
+                $host = $connectionString[0]; // Ganti dengan IP/host server socket
+                $port = $connectionString[1];                    // Ganti dengan port server socket
+                $uniqId = $connectionString[2];         // ID unik printer ini
+    
+                $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+                if (!$socket) {
+                    die("Gagal membuat socket\n");
+                }
+    
+                if (!socket_connect($socket, $host, $port)) {
+                    die("Gagal konek ke server\n");
+                }
+                // Kirim uniq_id untuk registrasi
+                socket_write($socket, '{"type":"print","uniq_id":"'.$uniqId.'"}'."\n");
+    
+                socket_close($socket);
+            } catch (\Throwable $th) {
+                //throw $th;
             }
-
-            if (!socket_connect($socket, $host, $port)) {
-                die("Gagal konek ke server\n");
-            }
-            // Kirim uniq_id untuk registrasi
-            socket_write($socket, '{"type":"print","uniq_id":"'.$uniqId.'"}'."\n");
-
-            socket_close($socket);
         }
     }
 

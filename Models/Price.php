@@ -19,7 +19,7 @@ class Price extends Model
     {
         // for later
         static::retrieved(function ($model) {
-            if(request()->routeIs('sales-purchases.sales-purchases/prices.index') || request()->routeIs('sales-purchases.sales-purchases/prices.detail'))
+            if(request()->routeIs('sales-purchases.sales-purchases/prices.index') || request()->routeIs('sales-purchases.sales-purchases/prices.detail') || request()->routeIs('products.datatable'))
             {
                 $model->purchase_price = number_format($model->purchase_price);
                 $model->amount_1 = number_format($model->amount_1);
