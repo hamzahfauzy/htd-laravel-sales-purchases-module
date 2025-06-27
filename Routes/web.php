@@ -161,7 +161,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
     });
 
     Route::post('pos/print-last-invoice', function (Request $request) {
-        $invoice = Invoice::orderBy('id','DESC')->first();
+        $invoice = Invoice::latest()->first();
         Printer::first()?->printStruk([
             'toko' => [
                 'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
@@ -173,7 +173,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             'code' => $invoice->code,
             'tanggal' => date('Y-m-d H:i:s'),
             'items' => (array) $invoice->items,
-            'bayar' => $invoice->payment->amount,
+            'bayar' => $invoice->payment()->latest()->first()->amount,
         ]);
 
         return response()->json([
