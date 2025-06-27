@@ -343,6 +343,7 @@
                                 <div class="form-group mb-2">
                                     <label for="">Kode</label>
                                     <input type="text" name="edit_product_code" id="edit_product_code" class="form-control" placeholder="Kode">
+                                    <input type="hidden" name="edit_product_id" id="edit_product_id">
                                 </div>
                                 <div class="form-group mb-2">
                                     <label for="">Nama</label>
@@ -1292,6 +1293,7 @@
                 function updateProduct()
                 {
                     var productData = {
+                        id: $('#edit_product_id').val(),
                         code: $('#edit_product_code').val(),
                         name: $('#edit_product_name').val(),
                         stock: $('#edit_product_stock').val(),
@@ -1372,6 +1374,7 @@
                         if(data.status == 'success')
                         {
                             $('#editProductModal').modal('show')
+                            $('#edit_product_id').val(data.data.id)
                             $('#edit_product_code').val(data.data.code)
                             $('#edit_product_name').val(data.data.name)
                             $('#edit_product_stock').val('')

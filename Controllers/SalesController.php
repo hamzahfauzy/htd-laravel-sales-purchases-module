@@ -162,8 +162,9 @@ class SalesController
 
     function updateProduct(Request $request)
     {
-        $product = Product::where('code', $request->code)->first();
+        $product = Product::where('id', $request->id)->first();
         $product->update([
+            'code' => $request->code,
             'name' => $request->name,
             'unit' => $request->unit,
         ]);
