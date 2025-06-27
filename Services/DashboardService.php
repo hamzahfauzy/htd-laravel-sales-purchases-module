@@ -11,11 +11,11 @@ class DashboardService
         $today = \Carbon\Carbon::today();
         $startOfMonth = \Carbon\Carbon::now()->startOfMonth();
 
-        $summary = DB::table('sp_invoices')
+        $summary = DB::table('sp_payments')
             ->selectRaw("
-                SUM(CASE WHEN DATE(created_at) = ? THEN final_price ELSE 0 END) AS `Today Revenue`,
+                SUM(CASE WHEN DATE(created_at) = ? THEN amount ELSE 0 END) AS `Today Revenue`,
                 COUNT(CASE WHEN DATE(created_at) = ? THEN 1 ELSE NULL END) AS `Today Transaction`,
-                SUM(CASE WHEN created_at >= ? THEN final_price ELSE 0 END) AS `Month Revenue`,
+                SUM(CASE WHEN created_at >= ? THEN amount ELSE 0 END) AS `Month Revenue`,
                 COUNT(CASE WHEN created_at >= ? THEN 1 ELSE NULL END) AS `Month Transaction`
             ", [
                 $today->toDateString(),
@@ -24,7 +24,7 @@ class DashboardService
                 $startOfMonth,
             ])
             ->where('record_status', 'PUBLISH')
-            ->where('record_type', 'SALES')
+            ->where('record_type', 'IN')
             ->first();
 
         return view('sales-purchases::dashboard.revenue', compact('summary'));
