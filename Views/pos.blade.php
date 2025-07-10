@@ -448,6 +448,7 @@
             <script src="{{asset('js/dataTables.bootstrap5.js')}}"></script>
 
             <script>
+                var isBayar = false
                 const select2Params = {
                     theme: 'bootstrap-5',
                     placeholder: 'Find Product',
@@ -731,6 +732,10 @@
                 }
 
                 function bayar() {
+
+                    if(isBayar) return
+
+                    isBayar = true
 
                     var total_item = document.querySelectorAll('.item-table tbody tr');
 
