@@ -828,6 +828,7 @@
                     })
                     .catch((error) => {
                         alert('Gagal melakukan transaksi');
+                        isBayar = false
                     });
                 }
 
