@@ -794,11 +794,13 @@
                     if(data.payment_amount <= 0 || !data.payment_amount)
                     {
                         alert('Nominal Pembayaran tidak boleh kosong dan harus lebih dari 0')
+                        isBayar = false
                         return
                     }
 
                     if(data.change < 0 && data.payment_amount > 0 && !confirm('Nominal Pembayaran kurang dari jumlah yang harus dibayar. Lanjutkan ?'))
                     {
+                        isBayar = false
                         return
                     }
 
@@ -815,16 +817,6 @@
                     .then(data => {
                         alert('Berhasil melakukan transaksi');
                         window.location.reload();
-                        // selectedItems = []
-                        // selectedRow = 1
-                        // reloadTable()
-                        // setTotal(0)
-                        // // document.querySelector('input[name="payment_amount"]').value = ''
-                        // document.querySelector('input[name="discount"]').value = ''
-                        // document.getElementById('reference').value = ''
-                        // // document.getElementById('total').value = 'Rp 0'
-                        // // document.getElementById('change').value = 'Rp 0'
-                        // $('#paymentModal').modal('hide')
                     })
                     .catch((error) => {
                         alert('Gagal melakukan transaksi');
@@ -844,6 +836,13 @@
                             },
                             body: JSON.stringify({'action':'print last invoice'})
                         })
+                    }
+                }
+                
+                function printTodayRevenue()
+                {
+                    if(confirm('Apakah kamu yakin akan mencetak pendapatan hari ini ?')){
+                        fetch('/pos/print-today-revenue')
                     }
                 }
 
@@ -991,6 +990,8 @@
                             
                         } else if (e.key === 'F9') {
                             printLastInvoice()
+                        } else if (e.key === 'F10') {
+                            printTodayRevenue()
                         }
 
                         if(addKeyToBuffer)

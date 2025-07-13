@@ -197,6 +197,37 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             'data' => $invoice
         ]);
     });
+
+    Route::post('pos/print-today-revenue', function (Request $request) {
+        $today = \Carbon\Carbon::today();
+
+        $summary = \DB::table('sp_payments')
+            ->selectRaw("
+                SUM(CASE WHEN DATE(created_at) = ? THEN amount-`change` ELSE 0 END) AS `today_revenue`
+            ", [
+                $today->toDateString(),
+            ])
+            ->where('record_status', 'PUBLISH')
+            ->where('record_type', 'IN')
+            ->first();
+
+        $printer = Printer::first();
+        $paperSize = $printer->paper_size;
+        $text = str_repeat("-", $paperSize) . "\n";
+        $text .= "Tanggal : ".date('d-m-Y H:i:s')."\n";
+        $text .= "Kasir   : ".auth()->user()->name."\n";
+        $text .= str_repeat("-", $paperSize) . "\n";
+        $text .= "Penjualan   : Rp. ".number_format($summary->today_revenue)."\n";
+        
+        Printer::first()?->doPrint($text);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Today revenue Print',
+            'data' => []
+        ]);
+    });
+
     Route::post('pos', function (Request $request) {
 
         if($request->code)
