@@ -134,7 +134,7 @@
                             </code>
                         </div>
                     </div>
-                    <button class="btn btn-danger" onclick="openPaymentModal()">Lanjutkan Pembayaran</button>
+                    <button class="btn btn-danger btn-block w-100 mt-2" onclick="openPaymentModal()">Lanjutkan Pembayaran</button>
                 </div>
             </div>
         </div>
