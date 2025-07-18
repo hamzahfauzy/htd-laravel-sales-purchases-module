@@ -882,7 +882,7 @@
                     selectedProductIndex = $(rows).index(this);
                 });
 
-                function openPaymenModal(){
+                function openPaymentModal(){
                     $('#paymentModal').modal('show')
                     setTimeout(() => {
                         document.querySelector('[name="payment_amount"]').focus()
