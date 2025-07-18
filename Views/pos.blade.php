@@ -53,6 +53,10 @@
             .selected {
                 background-color: #D9EDF7 !important;
             }
+
+            .product-lists tbody tr {
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
