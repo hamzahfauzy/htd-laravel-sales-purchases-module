@@ -893,8 +893,6 @@
 
                     // Update selectedRowIndex
                     selectedProductIndex = $(rows).index(this);
-
-                    const rows = productLists.rows({ page: 'current' }).nodes();
                     const selectedRow = $(rows[selectedProductIndex]);
                     const code = selectedRow.data('code');
 
