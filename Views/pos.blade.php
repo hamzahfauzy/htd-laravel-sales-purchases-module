@@ -6,7 +6,7 @@
         <meta name="csrf_token" content="{{csrf_token()}}">
         <title>Kasir</title>
         <link
-            href="{{asset('modules/salespurchases/bootstrap.min.css')}}"
+            href="{{asset('modules/salespurchases/css/bootstrap.min.css')}}"
             rel="stylesheet"
             integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
             crossorigin="anonymous">
