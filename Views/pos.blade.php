@@ -881,6 +881,29 @@
                     // Update selectedRowIndex
                     selectedProductIndex = $(rows).index(this);
                 });
+                
+                $('.product-lists tbody').on('dblclick', 'tr', function () {
+                    const rows = productLists.rows({ page: 'current' }).nodes();
+
+                    // Hapus highlight semua
+                    $(rows).removeClass('selected');
+
+                    // Tambah highlight ke yang diklik
+                    $(this).addClass('selected');
+
+                    // Update selectedRowIndex
+                    selectedProductIndex = $(rows).index(this);
+
+                    const rows = productLists.rows({ page: 'current' }).nodes();
+                    const selectedRow = $(rows[selectedProductIndex]);
+                    const code = selectedRow.data('code');
+
+                    if (code) {
+                        // Kirim ke server
+                        findProduct(code);
+                        $('#productModal').modal('hide')
+                    }
+                });
 
                 function openPaymentModal(){
                     $('#paymentModal').modal('show')
