@@ -134,6 +134,7 @@
                             </code>
                         </div>
                     </div>
+                    <button class="btn btn-danger" onclick="openPaymentModal()">Lanjutkan Pembayaran</button>
                 </div>
             </div>
         </div>
@@ -880,6 +881,13 @@
                     // Update selectedRowIndex
                     selectedProductIndex = $(rows).index(this);
                 });
+
+                function openPaymenModal(){
+                    $('#paymentModal').modal('show')
+                    setTimeout(() => {
+                        document.querySelector('[name="payment_amount"]').focus()
+                    }, 1000);
+                }
 
                 document.addEventListener('keydown', function(e) {
                     if(e.target.id == 'void_invoice_code' || e.target.id == 'return_invoice_code' || e.target.id == 'reference' || e.target.classList.contains('qty')) return
