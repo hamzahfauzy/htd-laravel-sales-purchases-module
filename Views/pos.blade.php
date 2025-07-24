@@ -585,7 +585,7 @@
                                                 </select>
                                             </td>
                                             <td width="70px">
-                                                <input type="number" name="qty" class="form-control qty form-lg" style="width:70px" placeholder="Masukkan jumlah" value="1" onkeyup="changeQty(this.value, '${item.code}')">
+                                                <input type="number" name="qty" class="form-control qty form-lg" readonly style="width:70px" placeholder="Masukkan jumlah" value="1" onkeyup="changeQty(this.value, '${item.code}')">
                                             </td>
                                             <td class="text-end">
                                                 ${document.querySelector('.record_type_select').value == 'PURCHASES' ? `<input type="number" name="subtotal_value" class="form-control prices" id="price-${item.code}" data-code="${item.code}" value="${item.price}" data-baseprice="${item.price}" onchange="changePrice(this)" onkeyup="changePrice(this)">` : `<span id="price-${item.code}" class="prices" data-price="${item.price}" data-baseprice="${item.price}">${formatNumber(item.price)}</span>`}
@@ -920,7 +920,7 @@
                     const currentTime = Date.now();
 
                     // Reset buffer kalau jeda terlalu lama
-                    if (currentTime - lastKeyTime > 700) {
+                    if (currentTime - lastKeyTime > 1500) {
                         barcodeBuffer = '';
                     }
 
