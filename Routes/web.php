@@ -198,7 +198,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         ]);
     });
 
-    Route::post('pos/print-today-revenue', function (Request $request) {
+    Route::match(['get','post'],'pos/print-today-revenue', function (Request $request) {
         $today = \Carbon\Carbon::today();
 
         $summary = \DB::table('sp_payments')
@@ -209,6 +209,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             ])
             ->where('record_status', 'PUBLISH')
             ->where('record_type', 'IN')
+            ->where('created_by', auth()->id())
             ->first();
 
         $printer = Printer::first();
@@ -218,6 +219,11 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         $text .= "Kasir   : ".auth()->user()->name."\n";
         $text .= str_repeat("-", $paperSize) . "\n";
         $text .= "Penjualan   : Rp. ".number_format($summary->today_revenue)."\n";
+
+        if(isset($_GET['preview']))
+        {
+            return $text;
+        }
         
         Printer::first()?->doPrint($text);
 

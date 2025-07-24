@@ -81,7 +81,15 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="flex-column justify-content-center text-end me-2 d-none d-md-flex">
                                 <h6 class="m-0">{{auth()->user()->name}}</h6>
-                                <span style="font-size: 12px;">{!! auth()->user()->userRoleLabel !!}</span>
+                                <span style="font-size: 12px;">
+                                    {!! auth()->user()->userRoleLabel !!}
+                                    <br>
+                                    <a href="javascript:void(0)" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-warning btn-sm">Ganti Pengguna</a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                </span>
                             </div>
                             <a href="{{route('home')}}">
                                 <div class="bg-white rounded-circle text-secondary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
