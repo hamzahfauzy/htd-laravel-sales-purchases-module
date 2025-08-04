@@ -178,7 +178,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             ];
         }
         
-        Printer::first()?->printStruk([
+        $printer = Printer::first()?->printStruk([
             'toko' => [
                 'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
                 'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
@@ -195,7 +195,8 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
         return response()->json([
             'status' => true,
             'message' => 'Invoice Print',
-            'data' => $invoice
+            'data' => $invoice,
+            'printer' => $printer
         ]);
     });
 
@@ -241,12 +242,13 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             return $text;
         }
         
-        Printer::first()?->doPrint($text);
+        $printer = Printer::first()?->doPrint($text);
 
         return response()->json([
             'status' => true,
             'message' => 'Today revenue Print',
-            'data' => []
+            'data' => [],
+            'printer' => $printer
         ]);
     });
 
@@ -304,7 +306,7 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                 $item->delete();
             }
 
-            Printer::first()?->printStruk([
+            $printer = Printer::first()?->printStruk([
                 'toko' => [
                     'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
                     'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
@@ -321,7 +323,8 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
             return response()->json([
                 'status' => true,
                 'message' => 'Transaksi Update',
-                'data' => $invoice
+                'data' => $invoice,
+                'printer' => $printer
             ]);
         }
         else
@@ -375,10 +378,12 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                         'description' => $description,
                     ]);
                 }
+
+                $printer = null;
     
                 if($invoice->record_type == 'SALES')
                 {
-                    Printer::first()?->printStruk([
+                    $printer = Printer::first()?->printStruk([
                         'toko' => [
                             'nama' => env('STORE_NAME', 'TOKO MAJU JAYA'),
                             'alamat' => env('STORE_ADDRESS', 'Jl. Mawar No. 123, Jakarta'),
@@ -396,7 +401,8 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
                 return response()->json([
                     'status' => true,
                     'message' => 'Transaksi berhasil',
-                    'data' => $invoice
+                    'data' => $invoice,
+                    'printer' => $printer
                 ]);
             } catch (\Exception $e) {
                 return response()->json([
@@ -432,6 +438,6 @@ Route::middleware(['auth', 'web', 'verified'])->group(function () {
 
         // echo "<pre>$printString</pre>";
 
-        Printer::find(1)->printStruk($transaksi);
+        return Printer::find(1)->printStruk($transaksi);
     });
 });

@@ -828,6 +828,15 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        if(data.printer.target.type == 'NOSTRA-DRIVER'){
+                            fetch(data.printer.target.connection_string, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body:'print_string='+data.printer.print_string
+                            })
+                        }
                         alert('Berhasil melakukan transaksi');
                         window.location.reload();
                     })
@@ -849,13 +858,36 @@
                             },
                             body: JSON.stringify({'action':'print last invoice'})
                         })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.printer.target.type == 'NOSTRA-DRIVER'){
+                                fetch(data.printer.target.connection_string, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                    },
+                                    body:'print_string='+data.printer.print_string
+                                })
+                            }
+                        })
                     }
                 }
                 
                 function printTodayRevenue()
                 {
                     if(confirm('Apakah kamu yakin akan mencetak pendapatan hari ini ?')){
-                        fetch('/pos/print-today-revenue')
+                        fetch('/pos/print-today-revenue').then(res => res.json())
+                        .then(data => {
+                            if(data.printer.target.type == 'NOSTRA-DRIVER'){
+                                fetch(data.printer.target.connection_string, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                    },
+                                    body:'print_string='+data.printer.print_string
+                                })
+                            }
+                        })
                     }
                 }
 

@@ -70,7 +70,8 @@ class PrinterResource extends Resource
                         'NETWORK' => 'NETWORK', 
                         'BLUETOOTH' => 'BLUETOOTH',
                         'RAWBT' => 'RAWBT',
-                        'NOSTRA-SOCKET' => 'NOSTRA SOCKET',
+                        // 'NOSTRA-SOCKET' => 'NOSTRA SOCKET',
+                        'NOSTRA-DRIVER' => 'NOSTRA DRIVER',
                     ],
                     'required' => true
                 ],

@@ -26,8 +26,8 @@ class Printer extends Model
         $openDrawer  = "\x1B\x70\x00\x19\xFA"; // Open drawer
 
         // Kirim command binary ESC/POS
-        $content .= $init;
-        $content .= $openDrawer;
+        // $content .= $init;
+        // $content .= $openDrawer;
 
         // Header
         $content .= str_pad(strtoupper($data['toko']['nama']), $width, ' ', STR_PAD_BOTH) . "\n";
@@ -73,9 +73,9 @@ class Printer extends Model
             $content .= str_pad($line, $width, ' ', STR_PAD_BOTH) . "\n";
         }
 
-        $content .= $feed;
+        // $content .= $feed;
         if ($this->auto_cut == 'YES') {
-            $content .= $cut;
+            // $content .= $cut;
         }
 
         return $content;
@@ -92,6 +92,12 @@ class Printer extends Model
         if(in_array($this->type, ['WINDOWS','NETWORK','USB']))
         {
             return $this->directPrintStruk($data);
+        }
+
+        else if($this->type == 'NOSTRA-DRIVER')
+        {
+            $printString = $this->printString($data);
+            return ['target' => $this->toArray(), 'message' => 'print success', 'print_string' => $printString];
         }
 
         else if($this->type == 'NOSTRA-SOCKET')
@@ -119,10 +125,14 @@ class Printer extends Model
                 socket_write($socket, '{"type":"print","uniq_id":"'.$uniqId.'"}'."\n");
     
                 socket_close($socket);
+
+                return ['target' => $this->toArray(), 'message' => 'print success'];
             } catch (\Throwable $th) {
                 //throw $th;
             }
         }
+
+        return false;
     }
 
     public function directPrintStruk($data)
@@ -219,6 +229,8 @@ class Printer extends Model
         } catch (\Throwable $th) {
             //throw $th;
         }
+
+        return ['target' => $this->toArray(), 'message' => 'print success'];
     }
 
     public function doPrint($text)
