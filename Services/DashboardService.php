@@ -66,15 +66,21 @@ class DashboardService
 
         $lowStockProducts = DB::table('inv_items')
             ->join('inv_item_logs', 'inv_items.id', '=', 'inv_item_logs.item_id')
-            ->select('inv_items.id', 'inv_items.name', 'inv_items.low_stock_alert', DB::raw('
-                SUM(CASE WHEN inv_item_logs.record_type = "IN" THEN inv_item_logs.amount ELSE 0 END) -
-                SUM(CASE WHEN inv_item_logs.record_type = "OUT" THEN inv_item_logs.amount ELSE 0 END) AS stock
-            '))
-            ->groupBy('inv_items.id', 'inv_items.name')
+            ->select(
+                'inv_items.id',
+                'inv_items.name',
+                'inv_items.low_stock_alert',
+                DB::raw('
+                    SUM(CASE WHEN inv_item_logs.record_type = "IN" THEN inv_item_logs.amount ELSE 0 END) -
+                    SUM(CASE WHEN inv_item_logs.record_type = "OUT" THEN inv_item_logs.amount ELSE 0 END) AS stock
+                ')
+            )
+            ->whereNotNull('inv_items.low_stock_alert')
+            ->groupBy('inv_items.id', 'inv_items.name', 'inv_items.low_stock_alert') // tambahkan low_stock_alert di sini
             ->havingRaw('stock < inv_items.low_stock_alert')
-            ->whereNotNull('low_stock_alert')
             ->orderBy('stock', 'asc')
             ->get();
+
 
         return view('sales-purchases::dashboard.top', compact('topProducts', 'topSales', 'lowStockProducts'));
     }
